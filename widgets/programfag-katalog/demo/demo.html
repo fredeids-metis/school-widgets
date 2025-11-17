@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Programfag Katalog - Demo</title>
+  <link rel="stylesheet" href="../src/styles.css">
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+    .demo-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      padding: 40px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    h1 {
+      margin-top: 0;
+      color: #333;
+    }
+    .demo-info {
+      background: #f0f8ff;
+      border-left: 4px solid #0066cc;
+      padding: 15px;
+      margin-bottom: 30px;
+    }
+    .demo-info code {
+      background: #e8e8e8;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-size: 0.9em;
+    }
+  </style>
+</head>
+<body>
+  <div class="demo-container">
+    <h1>Programfag Katalog - Demo</h1>
+
+    <div class="demo-info">
+      <p><strong>Widget configuration:</strong></p>
+      <pre><code>ProgramfagCatalog.init({
+  schoolId: 'bergen-private-gymnas',
+  container: '#programfag-catalog'
+});</code></pre>
+    </div>
+
+    <!-- Widget container -->
+    <div id="programfag-catalog"></div>
+  </div>
+
+  <!-- Load widget -->
+  <script src="../src/catalog.js"></script>
+  <script>
+    // Initialize widget
+    ProgramfagCatalog.init({
+      schoolId: 'bergen-private-gymnas',
+      container: '#programfag-catalog'
+    });
+  </script>
+</body>
+</html>
