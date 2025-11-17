@@ -248,6 +248,9 @@ const ProgramfagCatalog = {
         </div>`
       : '';
 
+    // Use HTML version if available, otherwise fallback to markdown
+    const beskrivelseContent = fag.beskrivelseHTML || fag.beskrivelse || '';
+
     modal.innerHTML = `
       <div class="modal-content">
         <button class="modal-close" onclick="ProgramfagCatalog.closeModal()">&times;</button>
@@ -258,7 +261,7 @@ const ProgramfagCatalog = {
         ${vimeoHTML}
 
         <div class="modal-body">
-          ${fag.beskrivelse ? `<div class="beskrivelse">${fag.beskrivelseHTML || fag.beskrivelse}</div>` : ''}
+          <div class="beskrivelse">${beskrivelseContent}</div>
         </div>
 
         <a href="https://sokeresultat.udir.no/finn-lareplan.html?query=${fag.fagkode}&source=Laereplan&fltypefiltermulti=L%C3%A6replan&filtervalues=all" target="_blank" class="btn-lareplan">Se full læreplan på udir.no →</a>
