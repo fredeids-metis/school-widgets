@@ -271,11 +271,84 @@ const ProgramfagCatalog = {
     modal.style.display = 'flex';
     document.body.style.overflow = 'hidden';
 
+    // Convert competency goals to accordion
+    this.makeCompetencyAccordion(modal);
+
     modal.onclick = (e) => {
       if (e.target === modal) {
         this.closeModal();
       }
     };
+  },
+
+  /**
+   * Convert competency goals section to accordion
+   * @param {HTMLElement} modal - Modal element
+   */
+  makeCompetencyAccordion: function(modal) {
+    const modalBody = modal.querySelector('.modal-body');
+    if (!modalBody) return;
+
+    // Find all h2 headers in the content
+    const headers = modalBody.querySelectorAll('h2');
+
+    headers.forEach(header => {
+      const headerText = header.textContent.trim();
+
+      // Check if this is "Kompetansemål"
+      if (headerText === 'Kompetansemål') {
+        // Get the next sibling (should be <ul>)
+        const list = header.nextElementSibling;
+
+        if (list && list.tagName === 'UL') {
+          const itemCount = list.querySelectorAll('li').length;
+
+          // Create accordion wrapper
+          const accordion = document.createElement('div');
+          accordion.className = 'accordion';
+
+          // Create accordion header
+          const accordionHeader = document.createElement('div');
+          accordionHeader.className = 'accordion-header';
+          accordionHeader.innerHTML = `
+            <h3>I dette faget lærer du å ... <span class="accordion-count">(${itemCount})</span></h3>
+            <span class="accordion-icon">▼</span>
+          `;
+          accordionHeader.onclick = () => this.toggleAccordion(accordionHeader);
+
+          // Create accordion content
+          const accordionContent = document.createElement('div');
+          accordionContent.className = 'accordion-content';
+          accordionContent.appendChild(list.cloneNode(true));
+
+          // Build accordion
+          accordion.appendChild(accordionHeader);
+          accordion.appendChild(accordionContent);
+
+          // Replace h2 and ul with accordion
+          header.parentNode.insertBefore(accordion, header);
+          header.remove();
+          list.remove();
+        }
+      }
+    });
+  },
+
+  /**
+   * Toggle accordion open/closed
+   * @param {HTMLElement} header - Accordion header element
+   */
+  toggleAccordion: function(header) {
+    const accordion = header.parentElement;
+    const icon = header.querySelector('.accordion-icon');
+
+    accordion.classList.toggle('open');
+
+    if (accordion.classList.contains('open')) {
+      icon.textContent = '▲';
+    } else {
+      icon.textContent = '▼';
+    }
   },
 
   /**
