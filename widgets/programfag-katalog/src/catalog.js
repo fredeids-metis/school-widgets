@@ -112,15 +112,15 @@ const ProgramfagCatalog = {
    * @returns {string} HTML for card
    */
   createCard: function(fag) {
-    // New API structure uses beskrivelse (not sections.omFaget)
-    const beskrivelse = fag.beskrivelse || '';
-    const preview = beskrivelse.substring(0, 150) + (beskrivelse.length > 150 ? '...' : '');
+    // Use omFaget (plain text) for card preview to avoid markdown rendering
+    const omFaget = fag.omFaget || '';
+    const preview = omFaget.substring(0, 150) + (omFaget.length > 150 ? '...' : '');
 
     return `
       <div class="programfag-card"
            data-fagkode="${fag.fagkode}"
            data-title="${fag.title.toLowerCase()}"
-           data-beskrivelse="${beskrivelse.toLowerCase()}"
+           data-beskrivelse="${omFaget.toLowerCase()}"
            data-fagid="${fag.id}"
            tabindex="0"
            role="article"
@@ -248,11 +248,17 @@ const ProgramfagCatalog = {
         </div>`
       : '';
 
+    // Related subjects (fordypning)
+    const relatedHTML = fag.related && fag.related.length > 0
+      ? `<p class="related-info">Fordypning oppnås i lag med: <span class="related-badge-large">${fag.related.join(', ')}</span></p>`
+      : '';
+
     modal.innerHTML = `
       <div class="modal-content">
         <button class="modal-close" onclick="ProgramfagCatalog.closeModal()">&times;</button>
         <h2>${fag.title}</h2>
         <p class="fagkode-large">${fag.fagkode}</p>
+        ${relatedHTML}
 
         ${bildeHTML}
         ${vimeoHTML}
