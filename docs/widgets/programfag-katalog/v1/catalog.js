@@ -248,9 +248,6 @@ const ProgramfagCatalog = {
         </div>`
       : '';
 
-    // Use HTML version if available, otherwise fallback to markdown
-    const beskrivelseContent = fag.beskrivelseHTML || fag.beskrivelse || '';
-
     modal.innerHTML = `
       <div class="modal-content">
         <button class="modal-close" onclick="ProgramfagCatalog.closeModal()">&times;</button>
@@ -261,12 +258,18 @@ const ProgramfagCatalog = {
         ${vimeoHTML}
 
         <div class="modal-body">
-          <div class="beskrivelse">${beskrivelseContent}</div>
+          <div class="beskrivelse"></div>
         </div>
 
         <a href="https://sokeresultat.udir.no/finn-lareplan.html?query=${fag.fagkode}&source=Laereplan&fltypefiltermulti=L%C3%A6replan&filtervalues=all" target="_blank" class="btn-lareplan">Se full læreplan på udir.no →</a>
       </div>
     `;
+
+    // Insert HTML content separately to avoid escaping
+    const beskrivelseDiv = modal.querySelector('.beskrivelse');
+    if (beskrivelseDiv) {
+      beskrivelseDiv.innerHTML = fag.beskrivelseHTML || fag.beskrivelse || '';
+    }
 
     modal.style.display = 'flex';
     document.body.style.overflow = 'hidden';
