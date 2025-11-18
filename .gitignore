@@ -4,3 +4,6 @@ node_modules/
 .env
 .vscode/
 .idea/
+
+# Test files for local development
+test-*.html
