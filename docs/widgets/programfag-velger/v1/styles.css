@@ -1,25 +1,583 @@
-/* Programfag-velger Widget Styles */
-/* Matching design from programfag-katalog */
+/**
+ * programfag-velger - Bundled CSS
+ * Generated: 2025-11-18T12:45:44.701Z
+ * School: bergen-private-gymnas
+ * 
+ * Bundle includes:
+ * - base.css (variables & resets)
+ * - brand CSS (bergen-private-gymnas)
+ * - modal.css (shared modal component)
+ * - accordion.css (shared accordion component)
+ * - programfag-velger.css (widget-specific styles)
+ */
 
+/* ========================================
+   BASE STYLES & VARIABLES
+   ======================================== */
+
+/**
+ * Base CSS - Foundation for all school widgets
+ * Defines CSS variables and basic resets
+ */
+
+/* === CSS Variables === */
 :root {
+  /* Primary colors - Override these in brand CSS */
   --primary-color: #1F4739;        /* Mørkegrønn (hovedfarge) */
   --primary-hover: #163529;        /* Mørkere grønn for hover */
   --secondary-color: #E8F5A3;      /* Lys lime/grønn */
+
+  /* Text colors */
+  --text-dark: #000000;            /* Mørk tekst */
+  --text-medium: #737373;          /* Medium grå tekst */
+  --text-light: #666666;           /* Lys grå tekst */
+
+  /* Border and background */
+  --border-light: #e7e7e7;         /* Lys grå border */
+  --background-light: #FAFAFA;     /* Lys bakgrunn */
+
+  /* Shadows */
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 8px 20px rgba(31, 71, 57, 0.15);
+
+  /* Font stack */
+  --font-family: helvetica, arial, sans-serif;
+
+  /* Border radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+
+  /* Spacing */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+
+  /* Transitions */
+  --transition-fast: 0.2s ease;
+  --transition-normal: 0.3s ease;
+  --transition-slow: 0.4s ease;
+}
+
+/* === Base Box Sizing === */
+* {
+  box-sizing: border-box;
+}
+
+/* === Reset margins on common elements === */
+h1, h2, h3, h4, h5, h6, p, ul, ol {
+  margin: 0;
+  padding: 0;
+}
+
+ul {
+  list-style: none;
+}
+
+
+/* ========================================
+   BRAND STYLES (Bergen Private Gymnas)
+   ======================================== */
+
+/**
+ * Bergen Private Gymnas - Brand Styling
+ *
+ * This file overrides the default CSS variables in base.css
+ * to match Bergen Private Gymnas' branding.
+ *
+ * To create branding for a new school:
+ * 1. Copy this file
+ * 2. Rename it to match the school's ID (e.g., "another-school.css")
+ * 3. Adjust the color variables below
+ * 4. Reference it in the build script
+ */
+
+:root {
+  /* Primary brand colors */
+  --primary-color: #1F4739;        /* Mørkegrønn - Bergen Private Gymnas hovedfarge */
+  --primary-hover: #163529;        /* Mørkere grønn for hover states */
+  --secondary-color: #E8F5A3;      /* Lys lime/grønn - accent farge */
+
+  /* Optional: Override text colors if needed */
+  /* --text-dark: #000000; */
+  /* --text-medium: #737373; */
+  /* --text-light: #666666; */
+
+  /* Optional: Override shadows if needed */
+  /* --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05); */
+  /* --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.06); */
+  /* --shadow-lg: 0 8px 20px rgba(31, 71, 57, 0.15); */
+}
+
+/* Optional: Add school-specific custom styles here */
+/* Example:
+.school-logo {
+  background-image: url('https://example.com/logo.png');
+}
+*/
+
+
+/* ========================================
+   SHARED COMPONENT - MODAL
+   ======================================== */
+
+/**
+ * Modal Component - Shared modal styling for all widgets
+ * Used by: programfag-katalog, programfag-velger
+ */
+
+/* === Modal Backdrop === */
+.programfag-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 10000;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 40px 20px 20px 20px;
+  overflow-y: auto;
+}
+
+/* Force system font stack on modal and all children */
+.programfag-modal,
+.programfag-modal * {
+  font-family: helvetica, arial, sans-serif !important;
+}
+
+/* === Modal Content Container === */
+.modal-content {
+  background: white;
+  border-radius: var(--radius-xl);
+  padding: 40px;
+  max-width: 800px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+  animation: modalSlideIn 0.3s ease;
+  box-shadow: 0 10px 40px rgba(31, 71, 57, 0.2);
+  border: 2px solid var(--secondary-color);
+  box-sizing: border-box;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* === Close Button === */
+.modal-close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  color: #999;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all var(--transition-normal);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  z-index: 10;
+}
+
+.modal-close:hover {
+  background: rgba(240, 240, 240, 0.95);
+  color: #333;
+}
+
+/* === Modal Header === */
+.modal-content h2 {
+  margin: 0 0 10px 0;
+  font-size: 2rem;
+  color: #333;
+}
+
+/* === Fagkode Badge === */
+.fagkode-large {
+  display: inline-block;
+  background: var(--secondary-color);
+  padding: 8px 16px;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  color: var(--primary-color);
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+/* === Related Info Badge === */
+.related-info {
+  display: inline-block;
+  background: var(--secondary-color);
+  padding: 8px 16px;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  color: var(--primary-color);
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.related-badge-large {
+  color: var(--primary-color);
+  font-weight: 700;
+}
+
+/* === Fag Image === */
+.fag-bilde {
+  margin: 20px 0;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.fag-bilde img {
+  width: 100%;
+  height: auto;
+  display: block;
+  max-height: 400px;
+  object-fit: cover;
+}
+
+/* === Vimeo Video Embed === */
+.vimeo-container {
+  position: relative;
+  padding-bottom: 56.25%; /* 16:9 aspect ratio */
+  height: 0;
+  overflow: hidden;
+  margin: 20px 0;
+  border-radius: var(--radius-sm);
+}
+
+.vimeo-container iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* === Modal Body === */
+.modal-body {
+  margin-top: 20px;
+  width: 100%;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
+.om-faget {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: #555;
+  margin-bottom: 30px;
+}
+
+.modal-body h3 {
+  font-size: 1.5rem;
+  margin: 30px 0 15px 0;
+  color: #333;
+  border-bottom: 2px solid #e0e0e0;
+  padding-bottom: 10px;
+}
+
+.modal-body h4 {
+  font-size: 1.2rem;
+  margin: 20px 0 10px 0;
+  color: var(--primary-color);
+}
+
+.modal-body ul {
+  list-style: none;
+  padding: 0;
+}
+
+.modal-body ul li {
+  padding: 10px 0 10px 25px;
+  position: relative;
+  line-height: 1.6;
+  color: #555;
+}
+
+.modal-body ul li::before {
+  content: "→";
+  position: absolute;
+  left: 0;
+  color: var(--primary-color);
+  font-weight: bold;
+}
+
+/* === Læreplan Link Button === */
+.btn-lareplan {
+  display: inline-block;
+  margin-top: 30px;
+  padding: 14px 28px;
+  background: var(--primary-color);
+  color: white;
+  text-decoration: none;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  transition: all var(--transition-normal);
+  box-shadow: 0 3px 8px rgba(31, 71, 57, 0.3);
+}
+
+.btn-lareplan:hover {
+  background: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(31, 71, 57, 0.4);
+}
+
+/* === Responsive Design === */
+@media (max-width: 768px) {
+  .modal-content {
+    padding: 30px 20px;
+  }
+
+  .modal-content h2 {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Modal fullskjerm på mobil */
+  .programfag-modal {
+    padding: 0;
+    align-items: stretch;
+  }
+
+  .modal-content {
+    padding: 60px 20px 20px 20px; /* Ekstra topp-padding for sticky X-knapp */
+    margin: 0;
+    width: 100%;
+    max-width: 100%;
+    max-height: 100vh;
+    height: 100%;
+    border-radius: 0;
+    border: none;
+  }
+
+  .modal-content h2 {
+    font-size: 1.4rem;
+    padding-right: 30px;
+  }
+
+  .modal-body {
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .modal-body h3 {
+    font-size: 1.3rem;
+  }
+
+  .modal-body ul li {
+    padding-right: 5px;
+    font-size: 0.9rem;
+  }
+
+  /* Sticky X-knapp på mobil */
+  .modal-close {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  .om-faget {
+    font-size: 1rem;
+  }
+
+  .btn-lareplan {
+    padding: 12px 20px;
+    font-size: 0.9rem;
+  }
+}
+
+
+/* ========================================
+   SHARED COMPONENT - ACCORDION
+   ======================================== */
+
+/**
+ * Accordion Component - Collapsible sections
+ * Used for kompetansemål in modal views
+ */
+
+/* === Accordion Container === */
+.accordion {
+  margin: 30px 0;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: rgba(232, 245, 163, 0.15); /* Lysere versjon av secondary-color */
+  border: 2px solid var(--secondary-color);
+  transition: all var(--transition-normal);
+}
+
+/* === Accordion Header === */
+.accordion-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background: rgba(232, 245, 163, 0.3);
+  cursor: pointer;
+  transition: background var(--transition-normal);
+  user-select: none;
+}
+
+.accordion-header:hover {
+  background: rgba(232, 245, 163, 0.5);
+}
+
+.accordion-header h3 {
+  margin: 0;
+  padding: 0;
+  border: none;
+  font-size: 1.4rem;
+  color: var(--primary-color);
+}
+
+.accordion-count {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #666;
+  margin-left: 8px;
+}
+
+/* === Accordion Icon === */
+.accordion-icon {
+  font-size: 1.2rem;
+  color: var(--primary-color);
+  transition: transform var(--transition-normal);
+  font-weight: bold;
+}
+
+.accordion.open .accordion-icon {
+  transform: rotate(180deg);
+}
+
+/* === Accordion Content === */
+.accordion-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height var(--transition-slow);
+  background: rgba(232, 245, 163, 0.08); /* Veldig lys grønn-grå */
+}
+
+.accordion.open .accordion-content {
+  max-height: 2000px; /* Høy nok verdi til å vise alt innhold */
+  padding: 20px;
+  background: rgba(232, 245, 163, 0.12); /* Litt mørkere når åpen */
+}
+
+.accordion.open .accordion-header {
+  background: var(--secondary-color);
+}
+
+.accordion-content ul {
+  margin: 0;
+  padding: 0;
+}
+
+/* === Kjerneelement (Competency Goals) === */
+.kjerneelement {
+  margin-bottom: 20px;
+  padding: 20px;
+  background: white;
+  border-radius: var(--radius-md);
+  border-left: 5px solid var(--primary-color);
+  box-shadow: 0 3px 10px rgba(31, 71, 57, 0.12);
+  transition: all var(--transition-normal);
+  width: 100%;
+  box-sizing: border-box;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
+.kjerneelement:hover {
+  box-shadow: 0 5px 16px rgba(31, 71, 57, 0.18);
+  transform: translateX(4px);
+}
+
+.kjerneelement h4 {
+  margin: 0 0 5px 0;
+  color: var(--primary-color);
+  font-size: 1.1rem;
+}
+
+.kjerneelement p {
+  margin: 5px 0 0 0;
+  color: #666;
+  line-height: 1.6;
+}
+
+/* === Responsive Design === */
+@media (max-width: 480px) {
+  .kjerneelement {
+    padding: 12px;
+    margin-bottom: 12px;
+    margin-left: 0;
+    margin-right: 0;
+    border-left-width: 3px;
+  }
+
+  .kjerneelement h4 {
+    font-size: 1.05rem;
+  }
+
+  .kjerneelement p {
+    font-size: 0.9rem;
+  }
+}
+
+
+/* ========================================
+   WIDGET-SPECIFIC STYLES
+   ======================================== */
+
+/**
+ * Programfag Velger - Widget-specific styling
+ *
+ * This file contains ONLY velger-specific styles.
+ * Shared styles (base, brand, modal, accordion) are included via build script.
+ */
+
+/* Additional widget-specific color variables */
+:root {
   --success-color: #4CAF50;
   --error-color: #d32f2f;
   --warning-color: #ff9800;
   --border-color: #e0e0e0;
-  --border-light: #e7e7e7;
   --bg-light: #FAFAFA;
   --text-primary: #333;
   --text-secondary: #666;
-  --text-medium: #737373;
   --shadow: 0 2px 8px rgba(0,0,0,0.06);
   --shadow-hover: 0 8px 20px rgba(31, 71, 57, 0.15);
 }
 
 .programfag-velger {
-  font-family: helvetica, arial, sans-serif;
+  font-family: var(--font-family);
   color: var(--text-primary);
   line-height: 1.6;
 }
@@ -31,7 +589,7 @@
   padding: 1rem;
   background: white;
   border: 1px solid var(--border-color);
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   margin-bottom: 1.5rem;
   flex-wrap: wrap;
   align-items: center;
@@ -63,9 +621,9 @@
   cursor: pointer;
   font-size: 0.9rem;
   font-weight: 600;
-  transition: all 0.3s ease;
+  transition: all var(--transition-normal);
   white-space: nowrap;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-sm);
 }
 
 .pv-selector-btn:hover {
@@ -89,7 +647,7 @@
   margin-bottom: 2rem;
   padding: 1rem;
   background: var(--bg-light);
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
 }
 
 .pv-step {
@@ -100,7 +658,7 @@
   border-radius: 6px;
   text-align: center;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all var(--transition-fast);
 }
 
 .pv-step.active {
@@ -195,9 +753,9 @@
   padding: 1.5rem;
   background: white;
   border: 2px solid var(--border-color);
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all var(--transition-fast);
   text-align: center;
 }
 
@@ -251,7 +809,7 @@
   font-size: 1rem;
   background: white;
   cursor: pointer;
-  transition: border-color 0.2s;
+  transition: border-color var(--transition-fast);
 }
 
 .pv-previous-select:focus {
@@ -270,10 +828,10 @@
 .pv-blokk {
   background: white;
   border: 2px solid var(--border-light);
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   overflow: hidden;
   box-shadow: var(--shadow);
-  transition: all 0.3s ease;
+  transition: all var(--transition-normal);
 }
 
 .pv-blokk:hover {
@@ -300,11 +858,11 @@
   margin-bottom: 0.4rem;
   background: white;
   border: 2px solid var(--border-light);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all var(--transition-normal);
   font-size: 0.85rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-sm);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -371,7 +929,7 @@
   padding: 0.2rem 0.5rem;
   background: var(--secondary-color);
   color: var(--primary-color);
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   margin-top: 0.15rem;
   font-weight: 700;
 }
@@ -395,7 +953,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease;
+  transition: all var(--transition-fast);
   opacity: 0.6;
 }
 
@@ -439,7 +997,7 @@
 .pv-info-messages,
 .pv-error-messages {
   padding: 1.25rem;
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   box-shadow: var(--shadow);
   border: 2px solid;
 }
@@ -507,15 +1065,15 @@
 /* Three-column layout */
 .pv-summary-three-col {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr; /* Fast 3 kolonner */
+  grid-template-columns: 1fr 1fr 1fr;
   gap: 1rem;
   background: white;
   padding: 1rem;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   border: 2px solid var(--border-light);
   box-shadow: var(--shadow);
-  transition: all 0.3s ease;
-  align-items: stretch; /* Kolonnene strekker seg like høyt */
+  transition: all var(--transition-normal);
+  align-items: stretch;
 }
 
 /* Hvis bare 2 kolonner */
@@ -548,7 +1106,7 @@
   letter-spacing: 0.5px;
   border-bottom: 2px solid var(--secondary-color);
   padding-bottom: 0.4rem;
-  flex-shrink: 0; /* Header tar ikke ekstra plass */
+  flex-shrink: 0;
 }
 
 /* Container for fag-items som aligner mot bunn */
@@ -556,8 +1114,8 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  justify-content: flex-end; /* Aligner fag-bokser mot bunn */
-  flex: 1; /* Tar opp tilgjengelig plass */
+  justify-content: flex-end;
+  flex: 1;
 }
 
 /* Compact fag items */
@@ -615,7 +1173,7 @@
 .pv-criteria-checklist {
   background: white;
   padding: 0.75rem 1rem;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   border: 2px solid var(--border-light);
   box-shadow: var(--shadow);
   margin-bottom: 1rem;
@@ -639,8 +1197,8 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.4rem 0.6rem;
-  border-radius: 8px;
-  transition: all 0.3s ease;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-normal);
   border: 1.5px solid transparent;
 }
 
@@ -665,7 +1223,7 @@
   justify-content: center;
   font-size: 0.75rem;
   font-weight: 700;
-  transition: all 0.3s ease;
+  transition: all var(--transition-normal);
 }
 
 .pv-criteria-item.met .pv-criteria-checkbox {
@@ -724,7 +1282,7 @@
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all var(--transition-fast);
 }
 
 .pv-btn-primary {
@@ -758,7 +1316,7 @@
   padding: 3rem;
   color: var(--text-secondary);
   background: var(--bg-light);
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
 }
 
 /* Loading State */
@@ -787,7 +1345,7 @@
   text-align: center;
   padding: 2rem;
   background: #ffebee;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   color: var(--error-color);
 }
 
@@ -836,385 +1394,5 @@
 
   .pv-actions {
     flex-direction: column;
-  }
-}
-
-/* === Modal for fagdetaljer (gjenbruker styling fra programfag-katalog) === */
-.programfag-modal {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.6);
-  z-index: 10000;
-  align-items: flex-start;
-  justify-content: center;
-  padding: 40px 20px 20px 20px;
-  overflow-y: auto;
-}
-
-/* Force system font stack on modal and all children */
-.programfag-modal,
-.programfag-modal * {
-  font-family: helvetica, arial, sans-serif !important;
-}
-
-.modal-content {
-  background: white;
-  border-radius: 20px;
-  padding: 40px;
-  max-width: 800px;
-  width: 100%;
-  max-height: 90vh;
-  overflow-y: auto;
-  overflow-x: hidden;
-  position: relative;
-  animation: modalSlideIn 0.3s ease;
-  box-shadow: 0 10px 40px rgba(31, 71, 57, 0.2);
-  border: 2px solid var(--secondary-color);
-  box-sizing: border-box;
-}
-
-@keyframes modalSlideIn {
-  from {
-    opacity: 0;
-    transform: translateY(-30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.modal-close {
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  background: rgba(255, 255, 255, 0.9);
-  border: none;
-  font-size: 2rem;
-  cursor: pointer;
-  color: #999;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  transition: all 0.3s;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(10px);
-  z-index: 10;
-}
-
-.modal-close:hover {
-  background: rgba(240, 240, 240, 0.95);
-  color: #333;
-}
-
-.modal-content h2 {
-  font-family: helvetica, arial, sans-serif;
-  margin: 0 0 10px 0;
-  font-size: 2rem;
-  color: #333;
-}
-
-.fagkode-large {
-  display: inline-block;
-  background: var(--secondary-color);
-  padding: 8px 16px;
-  border-radius: 10px;
-  font-size: 0.9rem;
-  color: var(--primary-color);
-  font-weight: 700;
-  margin-bottom: 20px;
-}
-
-.related-info {
-  display: inline-block;
-  background: var(--secondary-color);
-  padding: 8px 16px;
-  border-radius: 10px;
-  font-size: 0.9rem;
-  color: var(--primary-color);
-  font-weight: 700;
-  margin-bottom: 20px;
-}
-
-.related-badge-large {
-  color: var(--primary-color);
-  font-weight: 700;
-}
-
-.fag-bilde {
-  margin: 20px 0;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.fag-bilde img {
-  width: 100%;
-  height: auto;
-  display: block;
-  max-height: 400px;
-  object-fit: cover;
-}
-
-.vimeo-container {
-  position: relative;
-  padding-bottom: 56.25%;
-  height: 0;
-  overflow: hidden;
-  margin: 20px 0;
-  border-radius: 8px;
-}
-
-.vimeo-container iframe {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.modal-body {
-  margin-top: 20px;
-  width: 100%;
-  overflow-wrap: break-word;
-  word-wrap: break-word;
-}
-
-.om-faget {
-  font-size: 1.05rem;
-  line-height: 1.7;
-  color: #555;
-  margin-bottom: 30px;
-}
-
-.modal-body h3 {
-  font-family: helvetica, arial, sans-serif;
-  font-size: 1.5rem;
-  margin: 30px 0 15px 0;
-  color: #333;
-  border-bottom: 2px solid #e0e0e0;
-  padding-bottom: 10px;
-}
-
-.modal-body h4 {
-  font-family: helvetica, arial, sans-serif;
-  font-size: 1.2rem;
-  margin: 20px 0 10px 0;
-  color: var(--primary-color);
-}
-
-.modal-body ul {
-  list-style: none;
-  padding: 0;
-}
-
-.modal-body ul li {
-  padding: 10px 0 10px 25px;
-  position: relative;
-  line-height: 1.6;
-  color: #555;
-}
-
-.modal-body ul li::before {
-  content: "→";
-  position: absolute;
-  left: 0;
-  color: var(--primary-color);
-  font-weight: bold;
-}
-
-.accordion {
-  margin: 30px 0;
-  border-radius: 12px;
-  overflow: hidden;
-  background: rgba(232, 245, 163, 0.15);
-  border: 2px solid var(--secondary-color);
-  transition: all 0.3s ease;
-}
-
-.accordion-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px;
-  background: rgba(232, 245, 163, 0.3);
-  cursor: pointer;
-  transition: background 0.3s ease;
-  user-select: none;
-}
-
-.accordion-header:hover {
-  background: rgba(232, 245, 163, 0.5);
-}
-
-.accordion-header h3 {
-  margin: 0;
-  padding: 0;
-  border: none;
-  font-size: 1.4rem;
-  color: var(--primary-color);
-}
-
-.accordion-count {
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: #666;
-  margin-left: 8px;
-}
-
-.accordion-icon {
-  font-size: 1.2rem;
-  color: var(--primary-color);
-  transition: transform 0.3s ease;
-  font-weight: bold;
-}
-
-.accordion-content {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.4s ease;
-  background: rgba(232, 245, 163, 0.08);
-}
-
-.accordion.open .accordion-content {
-  max-height: 2000px;
-  padding: 20px;
-  background: rgba(232, 245, 163, 0.12);
-}
-
-.accordion.open .accordion-header {
-  background: var(--secondary-color);
-}
-
-.accordion.open .accordion-icon {
-  transform: rotate(180deg);
-}
-
-.accordion-content ul {
-  margin: 0;
-  padding: 0;
-}
-
-.kjerneelement {
-  margin-bottom: 20px;
-  padding: 20px;
-  background: white;
-  border-radius: 12px;
-  border-left: 5px solid var(--primary-color);
-  box-shadow: 0 3px 10px rgba(31, 71, 57, 0.12);
-  transition: all 0.3s ease;
-  width: 100%;
-  box-sizing: border-box;
-  overflow-wrap: break-word;
-  word-wrap: break-word;
-}
-
-.kjerneelement:hover {
-  box-shadow: 0 5px 16px rgba(31, 71, 57, 0.18);
-  transform: translateX(4px);
-}
-
-.kjerneelement p {
-  margin: 5px 0 0 0;
-  color: #666;
-  line-height: 1.6;
-}
-
-.btn-lareplan {
-  display: inline-block;
-  margin-top: 30px;
-  padding: 14px 28px;
-  background: var(--primary-color);
-  color: white;
-  text-decoration: none;
-  border-radius: 12px;
-  font-weight: 600;
-  transition: all 0.3s;
-  box-shadow: 0 3px 8px rgba(31, 71, 57, 0.3);
-}
-
-.btn-lareplan:hover {
-  background: var(--primary-hover);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(31, 71, 57, 0.4);
-}
-
-/* Modal responsive design */
-@media (max-width: 768px) {
-  .modal-content {
-    padding: 30px 20px;
-  }
-
-  .modal-content h2 {
-  font-family: helvetica, arial, sans-serif;
-    font-size: 1.5rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .programfag-modal {
-    padding: 0;
-    align-items: stretch;
-  }
-
-  .modal-content {
-    padding: 60px 20px 20px 20px;
-    margin: 0;
-    width: 100%;
-    max-width: 100%;
-    max-height: 100vh;
-    height: 100%;
-    border-radius: 0;
-    border: none;
-  }
-
-  .modal-content h2 {
-  font-family: helvetica, arial, sans-serif;
-    font-size: 1.4rem;
-    padding-right: 30px;
-  }
-
-  .modal-close {
-    position: fixed;
-    top: 10px;
-    right: 10px;
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(10px);
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
-  }
-
-  .kjerneelement {
-    padding: 12px;
-    margin-bottom: 12px;
-    border-left-width: 3px;
-  }
-
-  .kjerneelement h4 {
-    font-size: 1.05rem;
-  }
-
-  .kjerneelement p {
-    font-size: 0.9rem;
-  }
-
-  .modal-body ul li {
-    padding-right: 5px;
-    font-size: 0.9rem;
-  }
-
-  .om-faget {
-    font-size: 1rem;
-  }
-
-  .btn-lareplan {
-    padding: 12px 20px;
-    font-size: 0.9rem;
   }
 }

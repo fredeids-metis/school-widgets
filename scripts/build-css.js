@@ -59,13 +59,13 @@ function writeFile(filePath, content) {
 /**
  * Build CSS for a widget
  */
-function buildWidget(widgetName, useModal = false, useAccordion = false) {
+function buildWidget(widgetName, cssFileName, useModal = false, useAccordion = false) {
   console.log(`\n📦 Building CSS for: ${widgetName}`);
 
   // Read all required CSS files
   const base = readFile(BASE_CSS);
   const brand = readFile(BRAND_CSS);
-  const widgetSrc = path.join(WIDGETS_DIR, widgetName, 'src', `${widgetName.split('-').pop()}.css`);
+  const widgetSrc = path.join(WIDGETS_DIR, widgetName, 'src', cssFileName);
   const widgetCss = readFile(widgetSrc);
 
   // Build the bundle
@@ -136,10 +136,10 @@ function main() {
   console.log(`School ID: ${SCHOOL_ID}`);
 
   // Build programfag-katalog (uses modal + accordion)
-  buildWidget('programfag-katalog', true, true);
+  buildWidget('programfag-katalog', 'catalog.css', true, true);
 
   // Build programfag-velger (uses modal + accordion)
-  buildWidget('programfag-velger', true, true);
+  buildWidget('programfag-velger', 'velger.css', true, true);
 
   console.log('\n✨ CSS build complete!\n');
 }

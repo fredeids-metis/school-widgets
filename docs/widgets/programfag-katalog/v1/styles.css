@@ -1,6 +1,6 @@
 /**
  * programfag-katalog - Bundled CSS
- * Generated: 2025-11-18T11:46:31.972Z
+ * Generated: 2025-11-18T12:45:44.694Z
  * School: bergen-private-gymnas
  * 
  * Bundle includes:
@@ -42,7 +42,7 @@
   --shadow-lg: 0 8px 20px rgba(31, 71, 57, 0.15);
 
   /* Font stack */
-  --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-family: helvetica, arial, sans-serif;
 
   /* Border radius */
   --radius-sm: 8px;
@@ -149,7 +149,7 @@ ul {
 /* Force system font stack on modal and all children */
 .programfag-modal,
 .programfag-modal * {
-  font-family: var(--font-family) !important;
+  font-family: helvetica, arial, sans-serif !important;
 }
 
 /* === Modal Content Container === */
@@ -556,3 +556,211 @@ ul {
    WIDGET-SPECIFIC STYLES
    ======================================== */
 
+/**
+ * Programfag Catalog - Widget-specific styling
+ *
+ * This file contains ONLY catalog-specific styles.
+ * Shared styles (base, brand, modal, accordion) are included via build script.
+ */
+
+/* === Container === */
+#programfag-catalog {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: var(--font-family);
+  box-sizing: border-box;
+}
+
+/* Sørg for at alle elementer bruker border-box */
+#programfag-catalog *,
+#programfag-catalog *::before,
+#programfag-catalog *::after {
+  box-sizing: border-box;
+}
+
+/* === Header og søk === */
+.programfag-header {
+  margin-bottom: 30px;
+}
+
+.programfag-header h2 {
+  margin: 0 0 20px 0;
+  font-size: 2rem;
+  color: #333;
+}
+
+.programfag-search {
+  width: 100%;
+  max-width: 500px;
+  padding: 12px 20px;
+  font-size: 16px;
+  border: 2px solid var(--border-light);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-normal);
+  box-shadow: var(--shadow-sm);
+}
+
+.programfag-search:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 4px 8px rgba(31, 71, 57, 0.15);
+}
+
+/* === Grid layout === */
+.programfag-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+/* === Fagkort === */
+.programfag-card {
+  background: white;
+  border: 2px solid #e0e0e0;
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  transition: all var(--transition-normal);
+  cursor: pointer;
+  box-shadow: var(--shadow-md);
+  outline: none;
+}
+
+.programfag-card:hover,
+.programfag-card:focus {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-4px);
+  border-color: var(--primary-color);
+  background: linear-gradient(to bottom, white 0%, rgba(232, 245, 163, 0.05) 100%);
+}
+
+.programfag-card:focus {
+  outline: 3px solid var(--secondary-color);
+  outline-offset: 2px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  margin-bottom: 12px;
+  gap: 10px;
+}
+
+.card-header h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: #333;
+  flex: 1;
+}
+
+.fagkode {
+  background: var(--secondary-color);
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  color: var(--primary-color);
+  white-space: nowrap;
+  font-weight: 700;
+}
+
+.card-body p {
+  margin: 0 0 15px 0;
+  color: #666;
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+.btn-details {
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: all var(--transition-normal);
+  box-shadow: 0 2px 6px rgba(31, 71, 57, 0.3);
+}
+
+.btn-details:hover {
+  background: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(31, 71, 57, 0.4);
+}
+
+/* === Loading og error states === */
+.loading,
+.error {
+  text-align: center;
+  padding: 40px;
+  font-size: 1.1rem;
+  color: #666;
+}
+
+.error {
+  color: #d32f2f;
+}
+
+/* === Ingen resultater melding === */
+.no-results {
+  text-align: center;
+  padding: 60px 20px;
+  color: #666;
+  background: white;
+  border-radius: var(--radius-lg);
+  margin-top: 20px;
+  box-shadow: var(--shadow-md);
+}
+
+.no-results p {
+  margin: 0 0 10px 0;
+  font-size: 1.1rem;
+}
+
+.no-results strong {
+  color: var(--primary-color);
+}
+
+/* === Responsiv design === */
+@media (max-width: 768px) {
+  .programfag-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .programfag-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .programfag-search {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  #programfag-catalog {
+    padding: 15px;
+  }
+
+  .card-header {
+    flex-direction: column;
+    align-items: start;
+  }
+
+  .fagkode {
+    margin-top: 5px;
+  }
+
+  .programfag-card {
+    padding: 15px;
+  }
+
+  .card-body p {
+    font-size: 0.9rem;
+  }
+
+  .programfag-header h2 {
+    font-size: 1.3rem;
+  }
+}
