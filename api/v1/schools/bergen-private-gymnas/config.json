@@ -1,0 +1,38 @@
+{
+  "school": {
+    "id": "bergen-private-gymnas",
+    "name": "Bergen Private Gymnas",
+    "shortName": "BPG",
+    "contact": {
+      "address": "Nygårdsgaten 112",
+      "postalCode": "5008",
+      "city": "Bergen",
+      "phone": "+47 55 30 87 00",
+      "email": "post@bergenprivategymnas.no",
+      "website": "https://bergenprivategymnas.no"
+    },
+    "branding": {
+      "primaryColor": "#003366",
+      "secondaryColor": "#FFD700",
+      "logo": "assets/logo.png"
+    },
+    "social": {
+      "facebook": "",
+      "instagram": "",
+      "linkedin": ""
+    },
+    "schoolType": "Privat videregående skole",
+    "programs": [
+      {
+        "id": "studiespesialisering",
+        "name": "Studiespesialisering",
+        "active": true
+      }
+    ],
+    "metadata": {
+      "established": 1966,
+      "studentCount": "~300",
+      "description": "Bergen Private Gymnas er en privat videregående skole i Bergen sentrum."
+    }
+  }
+}

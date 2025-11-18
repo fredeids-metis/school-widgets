@@ -1,0 +1,446 @@
+{
+  "school": "bergen-private-gymnas",
+  "struktur": {
+    "antallBlokker": 4,
+    "navnBlokker": [
+      "Blokk 1",
+      "Blokk 2",
+      "Blokk 3",
+      "Blokk 4"
+    ]
+  },
+  "blokker": {
+    "blokk1": {
+      "navn": "Blokk 1",
+      "fag": [
+        {
+          "id": "matematikk-2p",
+          "vg2Only": true,
+          "kategori": "matematikk"
+        },
+        {
+          "id": "matematikk-r1",
+          "vg3Only": false,
+          "kategori": "matematikk"
+        },
+        {
+          "id": "biologi-1",
+          "vg3Only": false,
+          "kategori": "naturfag"
+        },
+        {
+          "id": "matematikk-r2",
+          "vg3Only": true,
+          "kategori": "matematikk"
+        },
+        {
+          "id": "okonomistyring",
+          "vg3Only": false,
+          "kategori": "økonomi"
+        },
+        {
+          "id": "markedsforing-og-ledelse-1",
+          "vg3Only": false,
+          "kategori": "bedriftsledelse"
+        },
+        {
+          "id": "sosiologi-og-sosialantropologi",
+          "vg3Only": false,
+          "kategori": "samfunnsfag"
+        },
+        {
+          "id": "rettslaere-2",
+          "vg3Only": false,
+          "kategori": "samfunnsfag"
+        },
+        {
+          "id": "psykologi-1",
+          "vg3Only": false,
+          "kategori": "samfunnsfag"
+        },
+        {
+          "id": "bilde",
+          "vg3Only": false,
+          "kategori": "kunst"
+        },
+        {
+          "id": "samfunnsokonomi-1",
+          "vg3Only": false,
+          "kategori": "økonomi"
+        },
+        {
+          "id": "historie",
+          "vg3Only": true,
+          "kategori": "fellesfag"
+        }
+      ]
+    },
+    "blokk2": {
+      "navn": "Blokk 2",
+      "fag": [
+        {
+          "id": "matematikk-2p",
+          "vg2Only": true,
+          "kategori": "matematikk"
+        },
+        {
+          "id": "matematikk-r1",
+          "vg3Only": false,
+          "kategori": "matematikk"
+        },
+        {
+          "id": "kjemi-1",
+          "vg3Only": false,
+          "kategori": "naturfag"
+        },
+        {
+          "id": "biologi-2",
+          "vg3Only": false,
+          "kategori": "naturfag"
+        },
+        {
+          "id": "entreprenorskap-og-bedriftsutvikling-1",
+          "vg3Only": false,
+          "kategori": "bedriftsledelse"
+        },
+        {
+          "id": "markedsforing-og-ledelse-2",
+          "vg3Only": true,
+          "kategori": "bedriftsledelse"
+        },
+        {
+          "id": "politikk-og-menneskerettigheter",
+          "vg3Only": false,
+          "kategori": "samfunnsfag"
+        },
+        {
+          "id": "rettslaere-1",
+          "vg3Only": false,
+          "kategori": "samfunnsfag"
+        },
+        {
+          "id": "psykologi-2",
+          "vg3Only": false,
+          "kategori": "samfunnsfag"
+        },
+        {
+          "id": "musikk-fordypning-2",
+          "vg3Only": true,
+          "kategori": "musikk"
+        },
+        {
+          "id": "grafisk-design",
+          "vg3Only": false,
+          "kategori": "kunst"
+        },
+        {
+          "id": "historie",
+          "vg3Only": true,
+          "kategori": "fellesfag"
+        }
+      ]
+    },
+    "blokk3": {
+      "navn": "Blokk 3",
+      "fag": [
+        {
+          "id": "matematikk-2p",
+          "vg2Only": true,
+          "kategori": "matematikk"
+        },
+        {
+          "id": "matematikk-r2",
+          "vg3Only": true,
+          "kategori": "matematikk"
+        },
+        {
+          "id": "fysikk-1",
+          "vg3Only": false,
+          "kategori": "naturfag"
+        },
+        {
+          "id": "fysikk-2",
+          "vg3Only": true,
+          "kategori": "naturfag"
+        },
+        {
+          "id": "entreprenorskap-og-bedriftsutvikling-2",
+          "vg3Only": false,
+          "kategori": "bedriftsledelse"
+        },
+        {
+          "id": "markedsforing-og-ledelse-1",
+          "vg3Only": false,
+          "kategori": "bedriftsledelse"
+        },
+        {
+          "id": "sosialkunnskap",
+          "vg3Only": false,
+          "kategori": "samfunnsfag"
+        },
+        {
+          "id": "rettslaere-1",
+          "vg3Only": false,
+          "kategori": "samfunnsfag"
+        },
+        {
+          "id": "psykologi-2",
+          "vg3Only": false,
+          "kategori": "samfunnsfag"
+        },
+        {
+          "id": "engelsk-1",
+          "vg3Only": false,
+          "kategori": "språk"
+        },
+        {
+          "id": "musikk-fordypning-1",
+          "vg3Only": false,
+          "kategori": "musikk"
+        },
+        {
+          "id": "historie",
+          "vg3Only": true,
+          "kategori": "fellesfag"
+        }
+      ]
+    },
+    "blokk4": {
+      "navn": "Blokk 4",
+      "fag": [
+        {
+          "id": "matematikk-2p",
+          "vg2Only": true,
+          "kategori": "matematikk"
+        },
+        {
+          "id": "fysikk-1",
+          "vg3Only": false,
+          "kategori": "naturfag"
+        },
+        {
+          "id": "biologi-1",
+          "vg3Only": false,
+          "kategori": "naturfag"
+        },
+        {
+          "id": "kjemi-2",
+          "vg3Only": true,
+          "kategori": "naturfag"
+        },
+        {
+          "id": "okonomi-og-ledelse",
+          "vg3Only": false,
+          "kategori": "økonomi"
+        },
+        {
+          "id": "markedsforing-og-ledelse-2",
+          "vg3Only": true,
+          "kategori": "bedriftsledelse"
+        },
+        {
+          "id": "rettslaere-2",
+          "vg3Only": false,
+          "kategori": "samfunnsfag"
+        },
+        {
+          "id": "psykologi-1",
+          "vg3Only": false,
+          "kategori": "samfunnsfag"
+        },
+        {
+          "id": "sosiologi-og-sosialantropologi",
+          "vg3Only": false,
+          "kategori": "samfunnsfag"
+        },
+        {
+          "id": "historie",
+          "vg3Only": true,
+          "kategori": "fellesfag"
+        },
+        {
+          "id": "spansk-1-2",
+          "vg3Only": true,
+          "kategori": "språk"
+        }
+      ]
+    }
+  },
+  "regler": {
+    "forutsetninger": [
+      {
+        "fag": "matematikk-r2",
+        "krever": [
+          "matematikk-r1"
+        ],
+        "beskrivelse": "Matematikk R2 krever R1 fra VG2",
+        "feilmelding": "For å velge Matematikk R2 må du ha hatt Matematikk R1 i VG2"
+      },
+      {
+        "fag": "fysikk-2",
+        "krever": [
+          "fysikk-1"
+        ],
+        "beskrivelse": "Fysikk 2 krever Fysikk 1",
+        "feilmelding": "For å velge Fysikk 2 må du ha hatt Fysikk 1 i VG2"
+      },
+      {
+        "fag": "kjemi-2",
+        "krever": [
+          "kjemi-1"
+        ],
+        "beskrivelse": "Kjemi 2 krever Kjemi 1",
+        "feilmelding": "For å velge Kjemi 2 må du ha hatt Kjemi 1 i VG2"
+      },
+      {
+        "fag": "markedsforing-og-ledelse-2",
+        "krever": [
+          "markedsforing-og-ledelse-1"
+        ],
+        "beskrivelse": "Markedsføring og ledelse 2 krever Markedsføring og ledelse 1",
+        "feilmelding": "For å velge Markedsføring og ledelse 2 må du ha hatt Markedsføring og ledelse 1 i VG2"
+      }
+    ],
+    "eksklusjoner": [
+      {
+        "gruppe": [
+          "matematikk-r1",
+          "matematikk-r2",
+          "matematikk-2p"
+        ],
+        "beskrivelse": "Kan ikke kombinere R-matte og 2P-matte",
+        "feilmelding": "Du kan ikke kombinere R-matematikk (R1/R2) med 2P-matematikk"
+      }
+    ]
+  },
+  "kriterier": {
+    "studiespesialisering": {
+      "vg2": {
+        "minAntallFag": 4,
+        "maxAntallFag": 4,
+        "beskrivelse": "VG2 Studiespesialisering: Velg nøyaktig 4 fag, ett fra hver blokk",
+        "obligatoriskeBolker": [
+          "blokk1",
+          "blokk2",
+          "blokk3",
+          "blokk4"
+        ],
+        "kategorikrav": [
+          {
+            "type": "minimum",
+            "kategori": "matematikk",
+            "antall": 1,
+            "beskrivelse": "Minst 1 matematikkfag",
+            "feilmelding": "Du må velge minst ett matematikkfag i VG2"
+          }
+        ],
+        "fagkrav": [],
+        "infomeldinger": [
+          "Du må velge nøyaktig 1 fag per blokk (totalt 4 fag)",
+          "Minst ett av fagene må være matematikk"
+        ]
+      },
+      "vg3": {
+        "minAntallFag": 4,
+        "maxAntallFag": 4,
+        "beskrivelse": "VG3 Studiespesialisering: Velg nøyaktig 4 fag, ett fra hver blokk",
+        "obligatoriskeBolker": [
+          "blokk1",
+          "blokk2",
+          "blokk3",
+          "blokk4"
+        ],
+        "kategorikrav": [],
+        "fagkrav": [
+          {
+            "type": "obligatorisk",
+            "fag": "historie",
+            "beskrivelse": "Historie er obligatorisk i VG3",
+            "feilmelding": "Du må ha Historie i VG3"
+          },
+          {
+            "type": "obligatorisk-betinget",
+            "fag": "spansk-1-2",
+            "betingelse": "harSpansk",
+            "beskrivelse": "Spansk I+II må velges fra Blokk 4",
+            "feilmelding": "Du har Spansk I+II og må velge dette faget fra Blokk 4"
+          }
+        ],
+        "infomeldinger": [
+          "Du må velge nøyaktig 1 fag per blokk (totalt 4 fag)",
+          "Husk at noen fag krever at du hadde tilsvarende fag i VG2",
+          "Histoire er obligatorisk i VG3"
+        ]
+      }
+    },
+    "musikk": {
+      "vg2": {
+        "minAntallFag": 2,
+        "maxAntallFag": 4,
+        "beskrivelse": "VG2 Musikk: Velg 2-4 fag",
+        "obligatoriskeBolker": [],
+        "kategorikrav": [],
+        "fagkrav": [],
+        "infomeldinger": [
+          "Musikklinja har spesielle krav - kontakt skolen for mer informasjon"
+        ]
+      },
+      "vg3": {
+        "minAntallFag": 2,
+        "maxAntallFag": 4,
+        "beskrivelse": "VG3 Musikk: Velg 2-4 fag",
+        "obligatoriskeBolker": [],
+        "kategorikrav": [],
+        "fagkrav": [
+          {
+            "type": "obligatorisk-betinget",
+            "fag": "spansk-1-2",
+            "betingelse": "harSpansk",
+            "beskrivelse": "Spansk I+II må velges fra Blokk 4",
+            "feilmelding": "Du har Spansk I+II og må velge dette faget fra Blokk 4"
+          }
+        ],
+        "infomeldinger": [
+          "Musikklinja har spesielle krav - kontakt skolen for mer informasjon"
+        ]
+      }
+    },
+    "medier-og-kommunikasjon": {
+      "vg2": {
+        "minAntallFag": 2,
+        "maxAntallFag": 4,
+        "beskrivelse": "VG2 Medier og kommunikasjon: Velg 2-4 fag",
+        "obligatoriskeBolker": [],
+        "kategorikrav": [],
+        "fagkrav": [],
+        "infomeldinger": [
+          "Medier og kommunikasjon har spesielle krav - kontakt skolen for mer informasjon"
+        ]
+      },
+      "vg3": {
+        "minAntallFag": 2,
+        "maxAntallFag": 4,
+        "beskrivelse": "VG3 Medier og kommunikasjon: Velg 2-4 fag",
+        "obligatoriskeBolker": [],
+        "kategorikrav": [],
+        "fagkrav": [
+          {
+            "type": "obligatorisk-betinget",
+            "fag": "spansk-1-2",
+            "betingelse": "harSpansk",
+            "beskrivelse": "Spansk I+II må velges fra Blokk 4",
+            "feilmelding": "Du har Spansk I+II og må velge dette faget fra Blokk 4"
+          }
+        ],
+        "infomeldinger": [
+          "Medier og kommunikasjon har spesielle krav - kontakt skolen for mer informasjon"
+        ]
+      }
+    }
+  },
+  "metadata": {
+    "skoleaar": "2025-2026",
+    "sistOppdatert": "2025-11-17",
+    "kommentar": "Blokkstruktur og kriterier er fylt inn. Historie og Statistikk mangler i curriculum-data."
+  }
+}

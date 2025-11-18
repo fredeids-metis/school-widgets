@@ -1,147 +1,136 @@
 /**
- * Programfag Catalog - Minimal styling
- * Enkel, ren design som er lett å tilpasse
+ * programfag-katalog - Bundled CSS
+ * Generated: 2025-11-18T11:46:31.972Z
+ * School: bergen-private-gymnas
+ * 
+ * Bundle includes:
+ * - base.css (variables & resets)
+ * - brand CSS (bergen-private-gymnas)
+ * - modal.css (shared modal component)
+ * - accordion.css (shared accordion component)
+ * - programfag-katalog.css (widget-specific styles)
  */
 
-/* === Fargepalett (fra Bergen Private Gymnas) === */
+/* ========================================
+   BASE STYLES & VARIABLES
+   ======================================== */
+
+/**
+ * Base CSS - Foundation for all school widgets
+ * Defines CSS variables and basic resets
+ */
+
+/* === CSS Variables === */
 :root {
+  /* Primary colors - Override these in brand CSS */
   --primary-color: #1F4739;        /* Mørkegrønn (hovedfarge) */
   --primary-hover: #163529;        /* Mørkere grønn for hover */
   --secondary-color: #E8F5A3;      /* Lys lime/grønn */
+
+  /* Text colors */
   --text-dark: #000000;            /* Mørk tekst */
   --text-medium: #737373;          /* Medium grå tekst */
+  --text-light: #666666;           /* Lys grå tekst */
+
+  /* Border and background */
   --border-light: #e7e7e7;         /* Lys grå border */
   --background-light: #FAFAFA;     /* Lys bakgrunn */
+
+  /* Shadows */
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 8px 20px rgba(31, 71, 57, 0.15);
+
+  /* Font stack */
+  --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+  /* Border radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+
+  /* Spacing */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+
+  /* Transitions */
+  --transition-fast: 0.2s ease;
+  --transition-normal: 0.3s ease;
+  --transition-slow: 0.4s ease;
 }
 
-/* === Container === */
-#programfag-catalog {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+/* === Base Box Sizing === */
+* {
   box-sizing: border-box;
 }
 
-/* Sørg for at alle elementer bruker border-box */
-#programfag-catalog *,
-#programfag-catalog *::before,
-#programfag-catalog *::after {
-  box-sizing: border-box;
-}
-
-/* === Header og søk === */
-.programfag-header {
-  margin-bottom: 30px;
-}
-
-.programfag-header h2 {
-  margin: 0 0 20px 0;
-  font-size: 2rem;
-  color: #333;
-}
-
-.programfag-search {
-  width: 100%;
-  max-width: 500px;
-  padding: 12px 20px;
-  font-size: 16px;
-  border: 2px solid var(--border-light);
-  border-radius: 12px;
-  transition: all 0.3s;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-.programfag-search:focus {
-  outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 4px 8px rgba(31, 71, 57, 0.15);
-}
-
-/* === Grid layout === */
-.programfag-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
-}
-
-/* === Fagkort === */
-.programfag-card {
-  background: white;
-  border: 2px solid #e0e0e0;
-  border-radius: 16px;
-  padding: 24px;
-  transition: all 0.3s ease;
-  cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-  outline: none;
-}
-
-.programfag-card:hover,
-.programfag-card:focus {
-  box-shadow: 0 8px 20px rgba(31, 71, 57, 0.15);
-  transform: translateY(-4px);
-  border-color: var(--primary-color);
-  background: linear-gradient(to bottom, white 0%, rgba(232, 245, 163, 0.05) 100%);
-}
-
-.programfag-card:focus {
-  outline: 3px solid var(--secondary-color);
-  outline-offset: 2px;
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: start;
-  margin-bottom: 12px;
-  gap: 10px;
-}
-
-.card-header h3 {
+/* === Reset margins on common elements === */
+h1, h2, h3, h4, h5, h6, p, ul, ol {
   margin: 0;
-  font-size: 1.25rem;
-  color: #333;
-  flex: 1;
+  padding: 0;
 }
 
-.fagkode {
-  background: var(--secondary-color);
-  padding: 6px 12px;
-  border-radius: 8px;
-  font-size: 0.85rem;
-  color: var(--primary-color);
-  white-space: nowrap;
-  font-weight: 700;
+ul {
+  list-style: none;
 }
 
-.card-body p {
-  margin: 0 0 15px 0;
-  color: #666;
-  line-height: 1.6;
-  font-size: 0.95rem;
+
+/* ========================================
+   BRAND STYLES (Bergen Private Gymnas)
+   ======================================== */
+
+/**
+ * Bergen Private Gymnas - Brand Styling
+ *
+ * This file overrides the default CSS variables in base.css
+ * to match Bergen Private Gymnas' branding.
+ *
+ * To create branding for a new school:
+ * 1. Copy this file
+ * 2. Rename it to match the school's ID (e.g., "another-school.css")
+ * 3. Adjust the color variables below
+ * 4. Reference it in the build script
+ */
+
+:root {
+  /* Primary brand colors */
+  --primary-color: #1F4739;        /* Mørkegrønn - Bergen Private Gymnas hovedfarge */
+  --primary-hover: #163529;        /* Mørkere grønn for hover states */
+  --secondary-color: #E8F5A3;      /* Lys lime/grønn - accent farge */
+
+  /* Optional: Override text colors if needed */
+  /* --text-dark: #000000; */
+  /* --text-medium: #737373; */
+  /* --text-light: #666666; */
+
+  /* Optional: Override shadows if needed */
+  /* --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05); */
+  /* --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.06); */
+  /* --shadow-lg: 0 8px 20px rgba(31, 71, 57, 0.15); */
 }
 
-.btn-details {
-  background: var(--primary-color);
-  color: white;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 10px;
-  cursor: pointer;
-  font-size: 0.95rem;
-  font-weight: 600;
-  transition: all 0.3s;
-  box-shadow: 0 2px 6px rgba(31, 71, 57, 0.3);
+/* Optional: Add school-specific custom styles here */
+/* Example:
+.school-logo {
+  background-image: url('https://example.com/logo.png');
 }
+*/
 
-.btn-details:hover {
-  background: var(--primary-hover);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(31, 71, 57, 0.4);
-}
 
-/* === Modal === */
+/* ========================================
+   SHARED COMPONENT - MODAL
+   ======================================== */
+
+/**
+ * Modal Component - Shared modal styling for all widgets
+ * Used by: programfag-katalog, programfag-velger
+ */
+
+/* === Modal Backdrop === */
 .programfag-modal {
   display: none;
   position: fixed;
@@ -150,22 +139,29 @@
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.6);
-  z-index: 1000;
+  z-index: 10000;
   align-items: flex-start;
   justify-content: center;
   padding: 40px 20px 20px 20px;
   overflow-y: auto;
 }
 
+/* Force system font stack on modal and all children */
+.programfag-modal,
+.programfag-modal * {
+  font-family: var(--font-family) !important;
+}
+
+/* === Modal Content Container === */
 .modal-content {
   background: white;
-  border-radius: 20px;
+  border-radius: var(--radius-xl);
   padding: 40px;
   max-width: 800px;
   width: 100%;
   max-height: 90vh;
   overflow-y: auto;
-  overflow-x: hidden; /* Forhindre horisontal scrolling */
+  overflow-x: hidden;
   position: relative;
   animation: modalSlideIn 0.3s ease;
   box-shadow: 0 10px 40px rgba(31, 71, 57, 0.2);
@@ -184,6 +180,7 @@
   }
 }
 
+/* === Close Button === */
 .modal-close {
   position: absolute;
   top: 15px;
@@ -199,7 +196,7 @@
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  transition: all 0.3s;
+  transition: all var(--transition-normal);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(10px);
   z-index: 10;
@@ -210,12 +207,14 @@
   color: #333;
 }
 
+/* === Modal Header === */
 .modal-content h2 {
   margin: 0 0 10px 0;
   font-size: 2rem;
   color: #333;
 }
 
+/* === Fagkode Badge === */
 .fagkode-large {
   display: inline-block;
   background: var(--secondary-color);
@@ -227,7 +226,7 @@
   margin-bottom: 20px;
 }
 
-/* === Relaterte fag (Fordypning i lag med) === */
+/* === Related Info Badge === */
 .related-info {
   display: inline-block;
   background: var(--secondary-color);
@@ -244,10 +243,10 @@
   font-weight: 700;
 }
 
-/* === Fagbilde === */
+/* === Fag Image === */
 .fag-bilde {
   margin: 20px 0;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   overflow: hidden;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
@@ -260,14 +259,14 @@
   object-fit: cover;
 }
 
-/* === Vimeo video === */
+/* === Vimeo Video Embed === */
 .vimeo-container {
   position: relative;
   padding-bottom: 56.25%; /* 16:9 aspect ratio */
   height: 0;
   overflow: hidden;
   margin: 20px 0;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
 }
 
 .vimeo-container iframe {
@@ -278,7 +277,7 @@
   height: 100%;
 }
 
-/* === Modal body === */
+/* === Modal Body === */
 .modal-body {
   margin-top: 20px;
   width: 100%;
@@ -327,100 +326,7 @@
   font-weight: bold;
 }
 
-/* === Accordion (Kompetansemål dropdown) === */
-.accordion {
-  margin: 30px 0;
-  border-radius: 12px;
-  overflow: hidden;
-  background: rgba(232, 245, 163, 0.15); /* Lysere versjon av secondary-color */
-  border: 2px solid var(--secondary-color);
-  transition: all 0.3s ease;
-}
-
-.accordion-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px;
-  background: rgba(232, 245, 163, 0.3);
-  cursor: pointer;
-  transition: background 0.3s ease;
-  user-select: none;
-}
-
-.accordion-header:hover {
-  background: rgba(232, 245, 163, 0.5);
-}
-
-.accordion-header h3 {
-  margin: 0;
-  padding: 0;
-  border: none;
-  font-size: 1.4rem;
-  color: var(--primary-color);
-}
-
-.accordion-count {
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: #666;
-  margin-left: 8px;
-}
-
-.accordion-icon {
-  font-size: 1.2rem;
-  color: var(--primary-color);
-  transition: transform 0.3s ease;
-  font-weight: bold;
-}
-
-.accordion-content {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.4s ease;
-  background: rgba(232, 245, 163, 0.08); /* Veldig lys grønn-grå */
-}
-
-.accordion.open .accordion-content {
-  max-height: 2000px; /* Høy nok verdi til å vise alt innhold */
-  padding: 20px;
-  background: rgba(232, 245, 163, 0.12); /* Litt mørkere når åpen */
-}
-
-.accordion.open .accordion-header {
-  background: var(--secondary-color);
-}
-
-.accordion-content ul {
-  margin: 0;
-  padding: 0;
-}
-
-.kjerneelement {
-  margin-bottom: 20px;
-  padding: 20px;
-  background: white;
-  border-radius: 12px;
-  border-left: 5px solid var(--primary-color);
-  box-shadow: 0 3px 10px rgba(31, 71, 57, 0.12);
-  transition: all 0.3s ease;
-  width: 100%;
-  box-sizing: border-box;
-  overflow-wrap: break-word;
-  word-wrap: break-word;
-}
-
-.kjerneelement:hover {
-  box-shadow: 0 5px 16px rgba(31, 71, 57, 0.18);
-  transform: translateX(4px);
-}
-
-.kjerneelement p {
-  margin: 5px 0 0 0;
-  color: #666;
-  line-height: 1.6;
-}
-
+/* === Læreplan Link Button === */
 .btn-lareplan {
   display: inline-block;
   margin-top: 30px;
@@ -428,9 +334,9 @@
   background: var(--primary-color);
   color: white;
   text-decoration: none;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   font-weight: 600;
-  transition: all 0.3s;
+  transition: all var(--transition-normal);
   box-shadow: 0 3px 8px rgba(31, 71, 57, 0.3);
 }
 
@@ -440,45 +346,8 @@
   box-shadow: 0 6px 16px rgba(31, 71, 57, 0.4);
 }
 
-/* === Loading og error states === */
-.loading,
-.error {
-  text-align: center;
-  padding: 40px;
-  font-size: 1.1rem;
-  color: #666;
-}
-
-.error {
-  color: #d32f2f;
-}
-
-/* === Ingen resultater melding === */
-.no-results {
-  text-align: center;
-  padding: 60px 20px;
-  color: #666;
-  background: white;
-  border-radius: 16px;
-  margin-top: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-}
-
-.no-results p {
-  margin: 0 0 10px 0;
-  font-size: 1.1rem;
-}
-
-.no-results strong {
-  color: var(--primary-color);
-}
-
-/* === Responsiv design === */
+/* === Responsive Design === */
 @media (max-width: 768px) {
-  .programfag-grid {
-    grid-template-columns: 1fr;
-  }
-
   .modal-content {
     padding: 30px 20px;
   }
@@ -486,42 +355,9 @@
   .modal-content h2 {
     font-size: 1.5rem;
   }
-
-  .programfag-header h2 {
-    font-size: 1.5rem;
-  }
-
-  .programfag-search {
-    max-width: 100%;
-  }
 }
 
 @media (max-width: 480px) {
-  #programfag-catalog {
-    padding: 15px;
-  }
-
-  .card-header {
-    flex-direction: column;
-    align-items: start;
-  }
-
-  .fagkode {
-    margin-top: 5px;
-  }
-
-  .programfag-card {
-    padding: 15px;
-  }
-
-  .card-body p {
-    font-size: 0.9rem;
-  }
-
-  .programfag-header h2 {
-    font-size: 1.3rem;
-  }
-
   /* Modal fullskjerm på mobil */
   .programfag-modal {
     padding: 0;
@@ -553,22 +389,6 @@
     font-size: 1.3rem;
   }
 
-  .kjerneelement {
-    padding: 12px;
-    margin-bottom: 12px;
-    margin-left: 0;
-    margin-right: 0;
-    border-left-width: 3px;
-  }
-
-  .kjerneelement h4 {
-    font-size: 1.05rem;
-  }
-
-  .kjerneelement p {
-    font-size: 0.9rem;
-  }
-
   .modal-body ul li {
     padding-right: 5px;
     font-size: 0.9rem;
@@ -593,3 +413,146 @@
     font-size: 0.9rem;
   }
 }
+
+
+/* ========================================
+   SHARED COMPONENT - ACCORDION
+   ======================================== */
+
+/**
+ * Accordion Component - Collapsible sections
+ * Used for kompetansemål in modal views
+ */
+
+/* === Accordion Container === */
+.accordion {
+  margin: 30px 0;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: rgba(232, 245, 163, 0.15); /* Lysere versjon av secondary-color */
+  border: 2px solid var(--secondary-color);
+  transition: all var(--transition-normal);
+}
+
+/* === Accordion Header === */
+.accordion-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background: rgba(232, 245, 163, 0.3);
+  cursor: pointer;
+  transition: background var(--transition-normal);
+  user-select: none;
+}
+
+.accordion-header:hover {
+  background: rgba(232, 245, 163, 0.5);
+}
+
+.accordion-header h3 {
+  margin: 0;
+  padding: 0;
+  border: none;
+  font-size: 1.4rem;
+  color: var(--primary-color);
+}
+
+.accordion-count {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #666;
+  margin-left: 8px;
+}
+
+/* === Accordion Icon === */
+.accordion-icon {
+  font-size: 1.2rem;
+  color: var(--primary-color);
+  transition: transform var(--transition-normal);
+  font-weight: bold;
+}
+
+.accordion.open .accordion-icon {
+  transform: rotate(180deg);
+}
+
+/* === Accordion Content === */
+.accordion-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height var(--transition-slow);
+  background: rgba(232, 245, 163, 0.08); /* Veldig lys grønn-grå */
+}
+
+.accordion.open .accordion-content {
+  max-height: 2000px; /* Høy nok verdi til å vise alt innhold */
+  padding: 20px;
+  background: rgba(232, 245, 163, 0.12); /* Litt mørkere når åpen */
+}
+
+.accordion.open .accordion-header {
+  background: var(--secondary-color);
+}
+
+.accordion-content ul {
+  margin: 0;
+  padding: 0;
+}
+
+/* === Kjerneelement (Competency Goals) === */
+.kjerneelement {
+  margin-bottom: 20px;
+  padding: 20px;
+  background: white;
+  border-radius: var(--radius-md);
+  border-left: 5px solid var(--primary-color);
+  box-shadow: 0 3px 10px rgba(31, 71, 57, 0.12);
+  transition: all var(--transition-normal);
+  width: 100%;
+  box-sizing: border-box;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
+.kjerneelement:hover {
+  box-shadow: 0 5px 16px rgba(31, 71, 57, 0.18);
+  transform: translateX(4px);
+}
+
+.kjerneelement h4 {
+  margin: 0 0 5px 0;
+  color: var(--primary-color);
+  font-size: 1.1rem;
+}
+
+.kjerneelement p {
+  margin: 5px 0 0 0;
+  color: #666;
+  line-height: 1.6;
+}
+
+/* === Responsive Design === */
+@media (max-width: 480px) {
+  .kjerneelement {
+    padding: 12px;
+    margin-bottom: 12px;
+    margin-left: 0;
+    margin-right: 0;
+    border-left-width: 3px;
+  }
+
+  .kjerneelement h4 {
+    font-size: 1.05rem;
+  }
+
+  .kjerneelement p {
+    font-size: 0.9rem;
+  }
+}
+
+
+/* ========================================
+   WIDGET-SPECIFIC STYLES
+   ======================================== */
+

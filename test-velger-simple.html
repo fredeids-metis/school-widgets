@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Velger - Simple</title>
+  <link rel="stylesheet" href="widgets/programfag-velger/src/styles.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background: #f5f5f5;
+    }
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+    }
+    .status {
+      padding: 10px;
+      margin-bottom: 20px;
+      border-radius: 4px;
+      background: #e3f2fd;
+      border-left: 4px solid #2196F3;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Programfag Velger - Test</h1>
+    <div class="status" id="status">Loading widget...</div>
+    <div id="programfag-velger"></div>
+  </div>
+
+  <script src="widgets/programfag-velger/src/velger.js"></script>
+  <script>
+    console.log('Script loaded');
+    console.log('ProgramfagVelger:', typeof ProgramfagVelger);
+
+    try {
+      ProgramfagVelger.init({
+        schoolId: 'bergen-private-gymnas',
+        container: '#programfag-velger',
+        apiBase: 'http://localhost:8000/api/v1'
+      });
+      document.getElementById('status').textContent = 'Widget initialized!';
+      document.getElementById('status').style.background = '#e8f5e9';
+      document.getElementById('status').style.borderColor = '#4CAF50';
+    } catch (error) {
+      console.error('Init error:', error);
+      document.getElementById('status').textContent = 'Error: ' + error.message;
+      document.getElementById('status').style.background = '#ffebee';
+      document.getElementById('status').style.borderColor = '#f44336';
+    }
+  </script>
+</body>
+</html>
