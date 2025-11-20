@@ -293,10 +293,13 @@ const ProgramfagCatalog = {
         beskrivelse.includes(searchQuery);
 
       // Check program filter match
+      // Fellesfag without a specific program field are for all programs
+      // Fellesfag with a program field are only for those specific programs
+      const isFellesfag = fagtype.includes('fellesfag');
       const matchesProgram = this.state.selectedProgram === 'alle' ||
         cardProgram === this.state.selectedProgram ||
-        (this.state.selectedProgram === 'studiespesialisering' &&
-         (fagtype === 'programfag' || fagtype.includes('fellesfag')));
+        (isFellesfag && !cardProgram) ||
+        (isFellesfag && cardProgram && cardProgram.split(',').includes(this.state.selectedProgram));
 
       // Show card if both filters match
       if (matchesSearch && matchesProgram) {
