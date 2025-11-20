@@ -19,10 +19,10 @@
   overflow-y: auto;
 }
 
-/* Force system font stack on modal and all children */
-.programfag-modal,
-.programfag-modal * {
-  font-family: helvetica, arial, sans-serif !important;
+/* Modal inherits font from parent context (e.g., Squarespace)
+   This ensures consistent typography across the entire page */
+.programfag-modal {
+  /* Removed forced font-family to allow inheritance from Squarespace */
 }
 
 /* === Modal Content Container === */
