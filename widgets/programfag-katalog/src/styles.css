@@ -58,6 +58,52 @@
   box-shadow: 0 4px 8px rgba(31, 71, 57, 0.15);
 }
 
+/* === Program filter === */
+.program-filter {
+  margin-bottom: 30px;
+}
+
+.program-filter label {
+  display: block;
+  margin-bottom: 12px;
+  font-weight: 600;
+  color: #333;
+  font-size: 0.95rem;
+}
+
+.filter-buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  padding: 10px 20px;
+  border: 2px solid var(--border-light);
+  background: white;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.filter-btn:hover {
+  border-color: var(--primary-color);
+  background: linear-gradient(to bottom, white 0%, rgba(232, 245, 163, 0.1) 100%);
+  box-shadow: 0 4px 8px rgba(31, 71, 57, 0.12);
+  transform: translateY(-1px);
+}
+
+.filter-btn.selected {
+  border-color: var(--primary-hover);
+  background: var(--primary-color);
+  color: white;
+  box-shadow: 0 4px 12px rgba(31, 71, 57, 0.25);
+}
+
 /* === Grid layout === */
 .programfag-grid {
   display: grid;
@@ -92,10 +138,9 @@
 
 .card-header {
   display: flex;
-  justify-content: space-between;
-  align-items: start;
-  margin-bottom: 12px;
+  flex-direction: column;
   gap: 10px;
+  margin-bottom: 12px;
 }
 
 .card-header h3 {
@@ -113,6 +158,49 @@
   color: var(--primary-color);
   white-space: nowrap;
   font-weight: 700;
+}
+
+/* === Fagtype badges === */
+.fag-type-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  align-self: flex-start;
+}
+
+.fag-type-badge.blue {
+  background: #E3F2FD;
+  color: #1565C0;
+  border: 1px solid #90CAF9;
+}
+
+.fag-type-badge.orange {
+  background: #FFF3E0;
+  color: #E65100;
+  border: 1px solid #FFB74D;
+}
+
+.fag-type-badge.green {
+  background: #E8F5E9;
+  color: #2E7D32;
+  border: 1px solid #81C784;
+}
+
+.fag-type-badge.gradient {
+  background: linear-gradient(135deg, #E8F5E9 0%, #E3F2FD 100%);
+  color: #1B5E20;
+  border: 1px solid #66BB6A;
+}
+
+.fag-type-badge.gray {
+  background: #F5F5F5;
+  color: #616161;
+  border: 1px solid #BDBDBD;
 }
 
 .card-body p {

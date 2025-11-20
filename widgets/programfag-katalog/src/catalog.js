@@ -16,6 +16,10 @@ const ProgramfagCatalog = {
     container: null
   },
 
+  state: {
+    selectedProgram: 'alle' // Default: show all
+  },
+
   /**
    * Initialize the catalog
    * @param {Object} options - Configuration options
@@ -55,9 +59,9 @@ const ProgramfagCatalog = {
    */
   loadData: function() {
     const container = this.config.container;
-    container.innerHTML = '<p class="loading">Laster programfag...</p>';
+    container.innerHTML = '<p class="loading">Laster fag...</p>';
 
-    const apiUrl = `${this.config.apiBaseUrl}/schools/${this.config.schoolId}/programfag.json`;
+    const apiUrl = `${this.config.apiBaseUrl}/schools/${this.config.schoolId}/curriculum.json`;
     console.log('Loading from:', apiUrl);
 
     fetch(apiUrl)
@@ -70,13 +74,18 @@ const ProgramfagCatalog = {
       })
       .then(data => {
         console.log('Data loaded:', data);
-        // New API structure has data.programfag (not data.fag)
-        this.renderCatalog(data.programfag || []);
+        // v2 API: Flatten nested structure
+        const allFag = [
+          ...(data.curriculum.valgfrieProgramfag || []),
+          ...(data.curriculum.obligatoriskeProgramfag || []),
+          ...(data.curriculum.fellesfag || [])
+        ];
+        this.renderCatalog(allFag);
       })
       .catch(error => {
         console.error('Load error:', error);
         console.error('API URL:', apiUrl);
-        container.innerHTML = `<p class="error">Kunne ikke laste programfag. Prøv igjen senere.<br><small>Feil: ${error.message}</small></p>`;
+        container.innerHTML = `<p class="error">Kunne ikke laste fag. Prøv igjen senere.<br><small>Feil: ${error.message}</small></p>`;
       });
   },
 
@@ -86,10 +95,11 @@ const ProgramfagCatalog = {
    */
   renderCatalog: function(programfag) {
     const container = this.config.container;
+    this.allProgramfag = programfag; // Store for filtering
 
     const html = `
       <div class="programfag-header">
-        <h2>Programfag (${programfag.length})</h2>
+        <h2>Fagtilbud (${programfag.length})</h2>
         <input
           type="text"
           id="programfag-search"
@@ -97,6 +107,25 @@ const ProgramfagCatalog = {
           placeholder="Søk etter fag..."
         >
       </div>
+
+      <div class="program-filter">
+        <label>Filtrer etter programområde:</label>
+        <div class="filter-buttons">
+          <button class="filter-btn ${this.state.selectedProgram === 'alle' ? 'selected' : ''}" data-program="alle">
+            Alle fag
+          </button>
+          <button class="filter-btn ${this.state.selectedProgram === 'studiespesialisering' ? 'selected' : ''}" data-program="studiespesialisering">
+            Studiespesialisering
+          </button>
+          <button class="filter-btn ${this.state.selectedProgram === 'musikk-dans-drama' ? 'selected' : ''}" data-program="musikk-dans-drama">
+            Musikk
+          </button>
+          <button class="filter-btn ${this.state.selectedProgram === 'medier-kommunikasjon' ? 'selected' : ''}" data-program="medier-kommunikasjon">
+            Medier
+          </button>
+        </div>
+      </div>
+
       <div class="programfag-grid" id="programfag-grid">
         ${programfag.map(f => this.createCard(f)).join('')}
       </div>
@@ -104,6 +133,47 @@ const ProgramfagCatalog = {
 
     container.innerHTML = html;
     this.setupSearch(programfag);
+    this.setupFilters();
+  },
+
+  /**
+   * Get badge information for fagtype
+   * @param {Object} fag - Subject data
+   * @returns {Object} Badge info with label, color, and program
+   */
+  getFagTypeBadge: function(fag) {
+    // Handle dual-type subjects (Matematikk 2P)
+    if (Array.isArray(fag.type)) {
+      return {
+        label: 'FELLESFAG / VALGFRITT',
+        color: 'gradient',
+        showProgram: false
+      };
+    }
+
+    const typeMap = {
+      'programfag': {
+        label: 'VALGFRITT',
+        color: 'blue',
+        showProgram: false
+      },
+      'obligatorisk-programfag': {
+        label: 'OBLIGATORISK',
+        color: 'orange',
+        showProgram: true
+      },
+      'fellesfag': {
+        label: 'FELLESFAG',
+        color: 'green',
+        showProgram: false
+      }
+    };
+
+    return typeMap[fag.type] || {
+      label: 'UKJENT',
+      color: 'gray',
+      showProgram: false
+    };
   },
 
   /**
@@ -116,18 +186,34 @@ const ProgramfagCatalog = {
     const omFaget = fag.omFaget || '';
     const preview = omFaget.substring(0, 150) + (omFaget.length > 150 ? '...' : '');
 
+    // Get badge information
+    const badge = this.getFagTypeBadge(fag);
+
+    // Format program name if needed
+    const programMap = {
+      'musikk-dans-drama': 'MUSIKK',
+      'medier-kommunikasjon': 'MEDIER'
+    };
+    const programText = badge.showProgram && fag.program
+      ? ` (${programMap[fag.program] || fag.program.toUpperCase()})`
+      : '';
+
     return `
       <div class="programfag-card"
            data-fagkode="${fag.fagkode}"
            data-title="${fag.title.toLowerCase()}"
            data-beskrivelse="${omFaget.toLowerCase()}"
            data-fagid="${fag.id}"
+           data-fagtype="${Array.isArray(fag.type) ? fag.type.join(',') : fag.type}"
+           data-program="${fag.program || ''}"
            tabindex="0"
            role="article"
-           aria-label="${fag.title} - ${fag.fagkode}">
+           aria-label="${fag.title} - ${badge.label}">
         <div class="card-header">
+          <div class="fag-type-badge ${badge.color}">
+            ${badge.label}${programText}
+          </div>
           <h3>${fag.title}</h3>
-          <span class="fagkode">${fag.fagkode}</span>
         </div>
         <div class="card-body">
           <p>${preview || 'Ingen beskrivelse tilgjengelig'}</p>
@@ -153,46 +239,110 @@ const ProgramfagCatalog = {
 
     searchInput.addEventListener('input', (e) => {
       const query = e.target.value.toLowerCase().trim();
-      const cards = document.querySelectorAll('.programfag-card');
-      const grid = document.getElementById('programfag-grid');
-      let visibleCount = 0;
+      this.applyFilters(query);
+    });
+  },
 
-      cards.forEach(card => {
-        const title = card.dataset.title;
-        const fagkode = card.dataset.fagkode.toLowerCase();
-        const beskrivelse = card.dataset.beskrivelse;
+  /**
+   * Setup filter buttons
+   */
+  setupFilters: function() {
+    const filterButtons = document.querySelectorAll('.filter-btn');
 
-        if (title.includes(query) || fagkode.includes(query) || beskrivelse.includes(query)) {
-          card.style.display = 'block';
-          visibleCount++;
-        } else {
-          card.style.display = 'none';
-        }
+    filterButtons.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const program = e.target.dataset.program;
+
+        // Update state
+        this.state.selectedProgram = program;
+
+        // Update button states
+        filterButtons.forEach(b => b.classList.remove('selected'));
+        e.target.classList.add('selected');
+
+        // Get current search query
+        const searchInput = document.getElementById('programfag-search');
+        const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+
+        // Apply filters
+        this.applyFilters(query);
       });
+    });
+  },
 
-      // Show "no results" message
-      let noResultsMsg = document.getElementById('no-results-message');
+  /**
+   * Apply both program filter and search filter
+   * @param {string} searchQuery - Search query string
+   */
+  applyFilters: function(searchQuery) {
+    const cards = document.querySelectorAll('.programfag-card');
+    const grid = document.getElementById('programfag-grid');
+    let visibleCount = 0;
 
-      if (visibleCount === 0 && query.length > 0) {
-        if (!noResultsMsg) {
-          noResultsMsg = document.createElement('div');
-          noResultsMsg.id = 'no-results-message';
-          noResultsMsg.className = 'no-results';
-          noResultsMsg.innerHTML = `
-            <p>Ingen fag matcher søket "<strong>${e.target.value}</strong>"</p>
-            <p style="font-size: 0.9rem; color: #999; margin-top: 10px;">Prøv et annet søkeord eller fagkode</p>
-          `;
-          grid.parentNode.insertBefore(noResultsMsg, grid.nextSibling);
-        } else {
-          noResultsMsg.innerHTML = `
-            <p>Ingen fag matcher søket "<strong>${e.target.value}</strong>"</p>
-            <p style="font-size: 0.9rem; color: #999; margin-top: 10px;">Prøv et annet søkeord eller fagkode</p>
-          `;
-        }
-      } else if (noResultsMsg) {
-        noResultsMsg.remove();
+    cards.forEach(card => {
+      const title = card.dataset.title;
+      const fagkode = card.dataset.fagkode.toLowerCase();
+      const beskrivelse = card.dataset.beskrivelse;
+      const fagtype = card.dataset.fagtype;
+      const cardProgram = card.dataset.program;
+
+      // Check search query match
+      const matchesSearch = !searchQuery ||
+        title.includes(searchQuery) ||
+        fagkode.includes(searchQuery) ||
+        beskrivelse.includes(searchQuery);
+
+      // Check program filter match
+      const matchesProgram = this.state.selectedProgram === 'alle' ||
+        cardProgram === this.state.selectedProgram ||
+        (this.state.selectedProgram === 'studiespesialisering' &&
+         (fagtype === 'programfag' || fagtype.includes('fellesfag')));
+
+      // Show card if both filters match
+      if (matchesSearch && matchesProgram) {
+        card.style.display = 'block';
+        visibleCount++;
+      } else {
+        card.style.display = 'none';
       }
     });
+
+    // Show "no results" message
+    let noResultsMsg = document.getElementById('no-results-message');
+
+    if (visibleCount === 0) {
+      if (!noResultsMsg) {
+        noResultsMsg = document.createElement('div');
+        noResultsMsg.id = 'no-results-message';
+        noResultsMsg.className = 'no-results';
+        grid.parentNode.insertBefore(noResultsMsg, grid.nextSibling);
+      }
+
+      const filterText = this.state.selectedProgram !== 'alle'
+        ? ` i programområdet "${this.getProgramName(this.state.selectedProgram)}"`
+        : '';
+
+      noResultsMsg.innerHTML = searchQuery
+        ? `<p>Ingen fag matcher søket "<strong>${searchQuery}</strong>"${filterText}</p>
+           <p style="font-size: 0.9rem; color: #999; margin-top: 10px;">Prøv et annet søkeord eller juster filteret</p>`
+        : `<p>Ingen fag tilgjengelig${filterText}</p>`;
+    } else if (noResultsMsg) {
+      noResultsMsg.remove();
+    }
+  },
+
+  /**
+   * Get display name for program
+   * @param {string} programId - Program identifier
+   * @returns {string} Display name
+   */
+  getProgramName: function(programId) {
+    const names = {
+      'studiespesialisering': 'Studiespesialisering',
+      'musikk-dans-drama': 'Musikk',
+      'medier-kommunikasjon': 'Medier'
+    };
+    return names[programId] || programId;
   },
 
   /**
@@ -200,12 +350,18 @@ const ProgramfagCatalog = {
    * @param {string} fagId - Subject ID
    */
   showDetails: function(fagId) {
-    const apiUrl = `${this.config.apiBaseUrl}/schools/${this.config.schoolId}/programfag.json`;
+    const apiUrl = `${this.config.apiBaseUrl}/schools/${this.config.schoolId}/curriculum.json`;
 
     fetch(apiUrl)
       .then(response => response.json())
       .then(data => {
-        const fag = data.programfag.find(f => f.id === fagId);
+        // v2 API: Search in all categories
+        const allFag = [
+          ...(data.curriculum.valgfrieProgramfag || []),
+          ...(data.curriculum.obligatoriskeProgramfag || []),
+          ...(data.curriculum.fellesfag || [])
+        ];
+        const fag = allFag.find(f => f.id === fagId);
         if (fag) {
           this.renderDetails(fag);
         }
