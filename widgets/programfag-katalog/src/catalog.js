@@ -17,7 +17,8 @@ const ProgramfagCatalog = {
   },
 
   state: {
-    selectedProgram: 'alle' // Default: show all
+    selectedProgram: 'alle', // Default: show all
+    selectedFagtype: 'alle' // Default: show all types
   },
 
   /**
@@ -112,7 +113,7 @@ const ProgramfagCatalog = {
         <label>Filtrer etter programområde:</label>
         <div class="filter-buttons">
           <button class="filter-btn ${this.state.selectedProgram === 'alle' ? 'selected' : ''}" data-program="alle">
-            Alle fag
+            Alle programmer
           </button>
           <button class="filter-btn ${this.state.selectedProgram === 'studiespesialisering' ? 'selected' : ''}" data-program="studiespesialisering">
             Studiespesialisering
@@ -126,6 +127,24 @@ const ProgramfagCatalog = {
         </div>
       </div>
 
+      <div class="fagtype-filter">
+        <label>Filtrer etter fagtype:</label>
+        <div class="filter-buttons">
+          <button class="fagtype-btn ${this.state.selectedFagtype === 'alle' ? 'selected' : ''}" data-fagtype="alle">
+            Alle fagtyper
+          </button>
+          <button class="fagtype-btn ${this.state.selectedFagtype === 'valgfrie' ? 'selected' : ''}" data-fagtype="valgfrie">
+            Valgfrie programfag
+          </button>
+          <button class="fagtype-btn ${this.state.selectedFagtype === 'obligatoriske' ? 'selected' : ''}" data-fagtype="obligatoriske">
+            Obligatoriske programfag
+          </button>
+          <button class="fagtype-btn ${this.state.selectedFagtype === 'fellesfag' ? 'selected' : ''}" data-fagtype="fellesfag">
+            Fellesfag
+          </button>
+        </div>
+      </div>
+
       <div class="programfag-grid" id="programfag-grid">
         ${programfag.map(f => this.createCard(f)).join('')}
       </div>
@@ -134,6 +153,7 @@ const ProgramfagCatalog = {
     container.innerHTML = html;
     this.setupSearch(programfag);
     this.setupFilters();
+    this.setupFagtypeFilters();
   },
 
   /**
@@ -271,6 +291,33 @@ const ProgramfagCatalog = {
   },
 
   /**
+   * Setup fagtype filter buttons
+   */
+  setupFagtypeFilters: function() {
+    const fagtypeButtons = document.querySelectorAll('.fagtype-btn');
+
+    fagtypeButtons.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const fagtype = e.target.dataset.fagtype;
+
+        // Update state
+        this.state.selectedFagtype = fagtype;
+
+        // Update button states
+        fagtypeButtons.forEach(b => b.classList.remove('selected'));
+        e.target.classList.add('selected');
+
+        // Get current search query
+        const searchInput = document.getElementById('programfag-search');
+        const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+
+        // Apply filters
+        this.applyFilters(query);
+      });
+    });
+  },
+
+  /**
    * Apply both program filter and search filter
    * @param {string} searchQuery - Search query string
    */
@@ -292,17 +339,27 @@ const ProgramfagCatalog = {
         fagkode.includes(searchQuery) ||
         beskrivelse.includes(searchQuery);
 
-      // Check program filter match
-      // Fellesfag without a specific program field are for all programs
-      // Fellesfag with a program field are only for those specific programs
+      // Check fagtype filter match
       const isFellesfag = fagtype.includes('fellesfag');
+      const isObligatorisk = fagtype === 'obligatorisk-programfag';
+      const isValgfri = fagtype === 'programfag' || (Array.isArray(fagtype) && fagtype.includes('programfag'));
+
+      const matchesFagtype = this.state.selectedFagtype === 'alle' ||
+        (this.state.selectedFagtype === 'fellesfag' && isFellesfag) ||
+        (this.state.selectedFagtype === 'obligatoriske' && isObligatorisk) ||
+        (this.state.selectedFagtype === 'valgfrie' && isValgfri);
+
+      // Check program filter match
+      // Fellesfag: Show if no program field (for all) OR if program field includes selected program
+      // Programfag (valgfrie): Show if no program field (for all) OR if program field includes selected program
+      // Obligatoriske: Show only if program field includes selected program
       const matchesProgram = this.state.selectedProgram === 'alle' ||
         cardProgram === this.state.selectedProgram ||
-        (isFellesfag && !cardProgram) ||
-        (isFellesfag && cardProgram && cardProgram.split(',').includes(this.state.selectedProgram));
+        (!cardProgram && !isObligatorisk) || // Subjects without program field are for all (except obligatoriske)
+        (cardProgram && cardProgram.split(',').includes(this.state.selectedProgram));
 
-      // Show card if both filters match
-      if (matchesSearch && matchesProgram) {
+      // Show card if all filters match
+      if (matchesSearch && matchesFagtype && matchesProgram) {
         card.style.display = 'block';
         visibleCount++;
       } else {
@@ -407,8 +464,9 @@ const ProgramfagCatalog = {
         </div>`
       : '';
 
-    // Related subjects (fordypning)
-    const relatedHTML = fag.related && fag.related.length > 0
+    // Related subjects (fordypning) - only for valgfrie programfag
+    const isValgfriProgramfag = fag.type === 'programfag' || (Array.isArray(fag.type) && fag.type.includes('programfag'));
+    const relatedHTML = isValgfriProgramfag && fag.related && fag.related.length > 0
       ? `<p class="related-info">Fordypning oppnås i lag med: <span class="related-badge-large">${fag.related.join(', ')}</span></p>`
       : '';
 
