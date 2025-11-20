@@ -109,39 +109,41 @@ const ProgramfagCatalog = {
         >
       </div>
 
-      <div class="program-filter">
-        <label>Filtrer etter programområde:</label>
-        <div class="filter-buttons">
-          <button class="filter-btn ${this.state.selectedProgram === 'alle' ? 'selected' : ''}" data-program="alle">
-            Alle programmer
-          </button>
-          <button class="filter-btn ${this.state.selectedProgram === 'studiespesialisering' ? 'selected' : ''}" data-program="studiespesialisering">
-            Studiespesialisering
-          </button>
-          <button class="filter-btn ${this.state.selectedProgram === 'musikk-dans-drama' ? 'selected' : ''}" data-program="musikk-dans-drama">
-            Musikk
-          </button>
-          <button class="filter-btn ${this.state.selectedProgram === 'medier-kommunikasjon' ? 'selected' : ''}" data-program="medier-kommunikasjon">
-            Medier
-          </button>
+      <div class="filters-container">
+        <div class="program-filter">
+          <label>Filtrer etter programområde:</label>
+          <div class="filter-buttons">
+            <button class="filter-btn ${this.state.selectedProgram === 'alle' ? 'selected' : ''}" data-program="alle">
+              Alle programmer
+            </button>
+            <button class="filter-btn ${this.state.selectedProgram === 'studiespesialisering' ? 'selected' : ''}" data-program="studiespesialisering">
+              Studiespesialisering
+            </button>
+            <button class="filter-btn ${this.state.selectedProgram === 'musikk-dans-drama' ? 'selected' : ''}" data-program="musikk-dans-drama">
+              Musikk
+            </button>
+            <button class="filter-btn ${this.state.selectedProgram === 'medier-kommunikasjon' ? 'selected' : ''}" data-program="medier-kommunikasjon">
+              Medier
+            </button>
+          </div>
         </div>
-      </div>
 
-      <div class="fagtype-filter">
-        <label>Filtrer etter fagtype:</label>
-        <div class="filter-buttons">
-          <button class="fagtype-btn ${this.state.selectedFagtype === 'alle' ? 'selected' : ''}" data-fagtype="alle">
-            Alle fagtyper
-          </button>
-          <button class="fagtype-btn ${this.state.selectedFagtype === 'valgfrie' ? 'selected' : ''}" data-fagtype="valgfrie">
-            Valgfrie programfag
-          </button>
-          <button class="fagtype-btn ${this.state.selectedFagtype === 'obligatoriske' ? 'selected' : ''}" data-fagtype="obligatoriske">
-            Obligatoriske programfag
-          </button>
-          <button class="fagtype-btn ${this.state.selectedFagtype === 'fellesfag' ? 'selected' : ''}" data-fagtype="fellesfag">
-            Fellesfag
-          </button>
+        <div class="fagtype-filter">
+          <label>Filtrer etter fagtype:</label>
+          <div class="filter-buttons">
+            <button class="fagtype-btn ${this.state.selectedFagtype === 'alle' ? 'selected' : ''}" data-fagtype="alle">
+              Alle fagtyper
+            </button>
+            <button class="fagtype-btn ${this.state.selectedFagtype === 'valgfrie' ? 'selected' : ''}" data-fagtype="valgfrie">
+              Valgfrie programfag
+            </button>
+            <button class="fagtype-btn ${this.state.selectedFagtype === 'obligatoriske' ? 'selected' : ''}" data-fagtype="obligatoriske">
+              Obligatoriske programfag
+            </button>
+            <button class="fagtype-btn ${this.state.selectedFagtype === 'fellesfag' ? 'selected' : ''}" data-fagtype="fellesfag">
+              Fellesfag
+            </button>
+          </div>
         </div>
       </div>
 

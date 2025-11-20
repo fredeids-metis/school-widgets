@@ -58,9 +58,19 @@
   box-shadow: 0 4px 8px rgba(31, 71, 57, 0.15);
 }
 
+/* === Filters container === */
+.filters-container {
+  display: flex;
+  gap: 30px;
+  margin-bottom: 30px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
 /* === Program filter === */
 .program-filter {
-  margin-bottom: 30px;
+  flex: 1;
+  min-width: 300px;
 }
 
 .program-filter label {
@@ -106,7 +116,8 @@
 
 /* === Fagtype filter === */
 .fagtype-filter {
-  margin-bottom: 30px;
+  flex: 1;
+  min-width: 300px;
 }
 
 .fagtype-filter label {
