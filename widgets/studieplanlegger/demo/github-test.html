@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Studieplanlegger - GitHub Data Test</title>
+
+  <!-- Shared CSS -->
+  <link rel="stylesheet" href="../../../shared/base.css">
+  <link rel="stylesheet" href="../../../shared/brand/bergen-private-gymnas.css">
+  <link rel="stylesheet" href="../../../shared/components/modal.css">
+
+  <!-- Widget CSS -->
+  <link rel="stylesheet" href="../studieplanlegger.css">
+
+  <style>
+    body {
+      font-family: var(--font-family);
+      background: var(--background-light);
+      padding: 2rem;
+      margin: 0;
+    }
+
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+      color: var(--primary-color);
+    }
+
+    .demo-info {
+      background: white;
+      border: 2px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .demo-info h2 {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+      color: var(--primary-color);
+    }
+
+    .demo-info p {
+      font-size: 0.9rem;
+      color: var(--text-medium);
+      margin-bottom: 0.5rem;
+    }
+
+    .demo-info code {
+      background: var(--background-light);
+      padding: 0.2rem 0.4rem;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 0.85rem;
+    }
+
+    .data-source-buttons {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .data-source-btn {
+      padding: 0.5rem 1rem;
+      border: 2px solid var(--primary-color);
+      background: white;
+      color: var(--primary-color);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+
+    .data-source-btn:hover {
+      background: var(--primary-color);
+      color: white;
+    }
+
+    .data-source-btn.active {
+      background: var(--primary-color);
+      color: white;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 3rem;
+      color: var(--text-medium);
+    }
+
+    .spinner {
+      border: 3px solid var(--border-light);
+      border-top: 3px solid var(--primary-color);
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 1rem;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <h1>Studieplanlegger - GitHub Data Test</h1>
+
+  <div class="demo-info">
+    <h2>🧪 Data Source Testing</h2>
+    <p>Denne siden lar deg teste widgeten med forskjellige datakilder:</p>
+    <ul>
+      <li><strong>Mock Data:</strong> Hardkodet testdata for rask utvikling</li>
+      <li><strong>Live API:</strong> Henter live data fra GitHub Pages API</li>
+    </ul>
+    <p><strong>API URL:</strong> <code>https://fredeids-metis.github.io/school-data/api/v1</code></p>
+    <p><strong>GitHub Repo:</strong> <code>fredeids-metis/school-data</code></p>
+
+    <div class="data-source-buttons">
+      <button class="data-source-btn active" data-source="mock">Mock Data</button>
+      <button class="data-source-btn" data-source="api">Live API</button>
+    </div>
+  </div>
+
+  <!-- Widget container -->
+  <div id="studieplanlegger-widget">
+    <div class="loading">
+      <div class="spinner"></div>
+      <p>Laster studieplanlegger...</p>
+    </div>
+  </div>
+
+  <!-- Widget JavaScript (ES6 modules) -->
+  <script type="module">
+    import { Studieplanlegger } from '../js/studieplanlegger.js';
+
+    let currentWidget = null;
+    let currentSource = 'mock';
+
+    // Initialize widget with specific data source
+    async function initWidget(dataSource) {
+      const container = document.getElementById('studieplanlegger-widget');
+
+      // Show loading
+      container.innerHTML = `
+        <div class="loading">
+          <div class="spinner"></div>
+          <p>Laster data fra ${dataSource === 'api' ? 'Live API' : 'mock'}...</p>
+        </div>
+      `;
+
+      // Clean up previous widget
+      if (currentWidget) {
+        currentWidget = null;
+      }
+
+      // Set options based on data source
+      const options = {
+        schoolId: 'bergen-private-gymnas',
+        useMockData: dataSource === 'mock',
+        useAPI: dataSource === 'api',
+        apiBaseUrl: 'https://fredeids-metis.github.io/school-data/api/v1'
+      };
+
+      try {
+        // Initialize new widget
+        currentWidget = new Studieplanlegger(container, options);
+        currentSource = dataSource;
+
+        // Expose for debugging
+        window.studieplanlegger = currentWidget;
+
+        console.log(`✅ Widget initialized with ${dataSource} data`);
+      } catch (error) {
+        console.error('Failed to initialize widget:', error);
+        container.innerHTML = `
+          <div class="demo-info" style="border-color: #d32f2f;">
+            <h2 style="color: #d32f2f;">❌ Feil ved lasting</h2>
+            <p>${error.message}</p>
+            <p>Sjekk console for mer info.</p>
+          </div>
+        `;
+      }
+    }
+
+    // Data source buttons
+    document.querySelectorAll('.data-source-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const source = btn.dataset.source;
+
+        // Update button states
+        document.querySelectorAll('.data-source-btn').forEach(b => {
+          b.classList.remove('active');
+        });
+        btn.classList.add('active');
+
+        // Reload widget with new source
+        await initWidget(source);
+      });
+    });
+
+    // Initialize with mock data by default
+    initWidget('mock');
+  </script>
+</body>
+</html>
