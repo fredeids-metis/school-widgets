@@ -33,8 +33,11 @@ export class ValidationService {
    * @param {string} apiBaseUrl - Base URL for API (default to GitHub Pages)
    */
   async init(apiBaseUrl = 'https://fredeids-metis.github.io/school-data/api/v1') {
+    console.log('🔄 ValidationService: Starting init...');
     try {
-      const response = await fetch(`${apiBaseUrl}/curriculum/regler.json`);
+      const url = `${apiBaseUrl}/curriculum/regler.json`;
+      console.log('🔄 ValidationService: Fetching from', url);
+      const response = await fetch(url);
       if (!response.ok) {
         throw new Error(`Failed to load regler.json: ${response.status}`);
       }
@@ -53,6 +56,9 @@ export class ValidationService {
 
       this.loaded = true;
       console.log('✅ ValidationService loaded rules from API');
+      console.log(`   - ${this.eksklusjoner.length} eksklusjoner`);
+      console.log(`   - ${this.forutsetninger.length} forutsetninger`);
+      console.log(`   - ${Object.keys(this.fagomrader).length} fagområder`);
       return true;
     } catch (error) {
       this.loadError = error;
@@ -92,16 +98,22 @@ export class ValidationService {
       {
         id: 'math-s-r-conflict',
         type: 'blocking',
-        gruppe: ['matematikk-s1', 'matematikk-s2', 'matematikk-r1', 'matematikk-r2'],
+        konfliktGrupper: [
+          ['matematikk-s1', 'matematikk-s2'],  // S-linja
+          ['matematikk-r1', 'matematikk-r2']   // R-linja
+        ],
         feilmelding: 'Du kan ikke kombinere Matematikk S og R på samme vitnemål',
         forslag: 'Velg enten S-linja (S1/S2) eller R-linja (R1/R2)'
       },
       {
-        id: 'math-r-2p-conflict',
+        id: 'math-programfag-2p-conflict',
         type: 'blocking',
-        gruppe: ['matematikk-r1', 'matematikk-r2', 'matematikk-2p'],
-        feilmelding: 'R-matematikk og 2P-matematikk kan ikke kombineres',
-        forslag: 'Matematikk R1 erstatter 2P automatisk'
+        konfliktGrupper: [
+          ['matematikk-r1', 'matematikk-s1'],  // Programfag
+          ['matematikk-2p']                     // Fellesfag
+        ],
+        feilmelding: 'R1/S1 og 2P kan ikke kombineres - programfaget erstatter fellesfaget',
+        forslag: 'Matematikk R1 eller S1 erstatter 2P automatisk'
       },
       {
         id: 'geofag-x-1-conflict',
@@ -215,6 +227,9 @@ export class ValidationService {
 
   /**
    * Check exclusion rules from API
+   * Supports two formats:
+   * - gruppe: simple mutual exclusion (all items conflict with each other)
+   * - konfliktGrupper: group vs group (items from different groups conflict)
    */
   _checkExclusions(fagId, selectedFagIds) {
     const reasons = [];
@@ -223,7 +238,34 @@ export class ValidationService {
     for (const eksklusjon of this.eksklusjoner) {
       if (eksklusjon.type !== 'blocking') continue;
 
-      if (eksklusjon.gruppe?.includes(fagId)) {
+      // Format 1: konfliktGrupper - group vs group conflicts
+      // e.g. S-linja [s1,s2] vs R-linja [r1,r2] - R1+R2 is OK, but R1+S1 is not
+      if (eksklusjon.konfliktGrupper) {
+        // Find which group (if any) the fagId belongs to
+        let fagGroup = null;
+        for (const group of eksklusjon.konfliktGrupper) {
+          if (group.includes(fagId)) {
+            fagGroup = group;
+            break;
+          }
+        }
+
+        if (fagGroup) {
+          // Check if any selected fag is in a DIFFERENT group
+          for (const otherGroup of eksklusjon.konfliktGrupper) {
+            if (otherGroup === fagGroup) continue; // Same group is OK
+
+            const conflict = otherGroup.find(id => selectedFagIds.includes(id));
+            if (conflict) {
+              reasons.push(eksklusjon.feilmelding || eksklusjon.beskrivelse);
+              suggestion = eksklusjon.forslag;
+              break;
+            }
+          }
+        }
+      }
+      // Format 2: gruppe - simple mutual exclusion (original format)
+      else if (eksklusjon.gruppe?.includes(fagId)) {
         const conflict = eksklusjon.gruppe.find(id =>
           id !== fagId && selectedFagIds.includes(id)
         );
@@ -281,7 +323,30 @@ export class ValidationService {
     for (const eksklusjon of this.eksklusjoner) {
       if (eksklusjon.type !== 'blocking') continue;
 
-      if (eksklusjon.gruppe?.includes(normalizedFagId)) {
+      // Format 1: konfliktGrupper - only block items from OTHER groups
+      if (eksklusjon.konfliktGrupper) {
+        let fagGroup = null;
+        for (const group of eksklusjon.konfliktGrupper) {
+          if (group.includes(normalizedFagId)) {
+            fagGroup = group;
+            break;
+          }
+        }
+        if (fagGroup) {
+          for (const otherGroup of eksklusjon.konfliktGrupper) {
+            if (otherGroup === fagGroup) continue;
+            for (const otherId of otherGroup) {
+              consequences.willBlock.push({
+                id: otherId,
+                navn: this._getFagNavn(otherId),
+                reason: eksklusjon.beskrivelse
+              });
+            }
+          }
+        }
+      }
+      // Format 2: gruppe - block all others in same group
+      else if (eksklusjon.gruppe?.includes(normalizedFagId)) {
         for (const otherId of eksklusjon.gruppe) {
           if (otherId !== normalizedFagId) {
             consequences.willBlock.push({
@@ -400,8 +465,22 @@ export class ValidationService {
     for (const eksklusjon of this.eksklusjoner) {
       if (eksklusjon.type !== 'blocking') continue;
 
-      const matchCount = (eksklusjon.gruppe || []).filter(id => allFag.includes(id)).length;
-      if (matchCount > 1) {
+      let hasConflict = false;
+
+      // Format 1: konfliktGrupper - check if fag from different groups are selected
+      if (eksklusjon.konfliktGrupper) {
+        const groupsWithSelections = eksklusjon.konfliktGrupper.filter(group =>
+          group.some(id => allFag.includes(id))
+        );
+        hasConflict = groupsWithSelections.length > 1;
+      }
+      // Format 2: gruppe - check if multiple from same group
+      else if (eksklusjon.gruppe) {
+        const matchCount = eksklusjon.gruppe.filter(id => allFag.includes(id)).length;
+        hasConflict = matchCount > 1;
+      }
+
+      if (hasConflict) {
         result.valid = false;
         result.errors.push({
           type: 'exclusion',
@@ -482,14 +561,35 @@ export class ValidationService {
     for (const eksklusjon of this.eksklusjoner) {
       if (eksklusjon.type !== 'blocking') continue;
 
-      const matchCount = (eksklusjon.gruppe || []).filter(id => allIds.includes(id)).length;
-      if (matchCount > 1) {
+      let hasConflict = false;
+      let conflictingFagIds = [];
+
+      // Format 1: konfliktGrupper
+      if (eksklusjon.konfliktGrupper) {
+        const groupsWithSelections = eksklusjon.konfliktGrupper.filter(group =>
+          group.some(id => allIds.includes(id))
+        );
+        hasConflict = groupsWithSelections.length > 1;
+        if (hasConflict) {
+          conflictingFagIds = eksklusjon.konfliktGrupper
+            .flat()
+            .filter(id => allIds.includes(id));
+        }
+      }
+      // Format 2: gruppe
+      else if (eksklusjon.gruppe) {
+        const matches = eksklusjon.gruppe.filter(id => allIds.includes(id));
+        hasConflict = matches.length > 1;
+        conflictingFagIds = matches;
+      }
+
+      if (hasConflict) {
         result.valid = false;
         result.canSubmit = false;
         result.errors.push({
           type: 'exclusion',
           message: eksklusjon.feilmelding || eksklusjon.beskrivelse,
-          fagIds: eksklusjon.gruppe.filter(id => allIds.includes(id))
+          fagIds: conflictingFagIds
         });
       }
     }
