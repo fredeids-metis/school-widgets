@@ -10,6 +10,19 @@ export class UIRenderer {
   }
 
   /**
+   * Check if any fag selections have been made
+   */
+  hasAnySelections(state) {
+    return (
+      state.vg1.matematikk !== null ||
+      state.vg1.fremmedsprak !== null ||
+      state.vg2.matematikk !== null ||
+      state.vg2.programfag.length > 0 ||
+      state.vg3.programfag.length > 0
+    );
+  }
+
+  /**
    * Render the entire widget
    */
   render() {
@@ -50,16 +63,24 @@ export class UIRenderer {
             </div>
           </div>
 
-          <div class="sp-filter-group">
-            <label class="sp-filter-label">Hadde du fremmedspråk på ungdomsskolen?</label>
-            <div class="sp-filter-buttons">
-              <button class="sp-filter-btn ${currentState.harFremmedsprak ? 'selected' : ''}"
-                      data-fremmedsprak="true">
-                Ja
-              </button>
-              <button class="sp-filter-btn ${!currentState.harFremmedsprak ? 'selected' : ''}"
-                      data-fremmedsprak="false">
-                Nei
+          <div class="sp-filter-group sp-filter-group-with-action">
+            <div class="sp-filter-group-main">
+              <label class="sp-filter-label">Hadde du fremmedspråk på ungdomsskolen?</label>
+              <div class="sp-filter-buttons">
+                <button class="sp-filter-btn ${currentState.harFremmedsprak ? 'selected' : ''}"
+                        data-fremmedsprak="true">
+                  Ja
+                </button>
+                <button class="sp-filter-btn ${!currentState.harFremmedsprak ? 'selected' : ''}"
+                        data-fremmedsprak="false">
+                  Nei
+                </button>
+              </div>
+            </div>
+            <div class="sp-filter-action">
+              <button class="sp-fjern-valg-btn ${this.hasAnySelections(currentState) ? 'active' : ''}"
+                      ${!this.hasAnySelections(currentState) ? 'disabled' : ''}>
+                Fjern alle valg
               </button>
             </div>
           </div>
@@ -113,6 +134,7 @@ export class UIRenderer {
   renderVG1() {
     const currentState = this.state.getState();
     const fellesfag = this.dataHandler.getFellesfag(currentState.programomrade, 'vg1');
+    const fellesProgramfag = this.dataHandler.getFellesProgramfag(currentState.programomrade, 'vg1');
 
     return `
       <div class="sp-vg-column">
@@ -126,10 +148,29 @@ export class UIRenderer {
             ${fellesfag.map(fag => `
               <div class="sp-fag-item fellesfag">
                 <div class="sp-fag-item-title">${fag.navn}</div>
-                <div class="sp-fag-item-timer">${fag.timer} timer</div>
+                <div class="sp-fag-item-meta">
+                  <div class="sp-fag-item-timer">${fag.timer}t</div>
+                  <div class="sp-fag-item-info" title="Mer info">i</div>
+                </div>
               </div>
             `).join('')}
           </div>
+
+          ${fellesProgramfag.length > 0 ? `
+            <div class="sp-divider"></div>
+            <div class="sp-fag-section">
+              <div class="sp-fag-section-title">Felles programfag</div>
+              ${fellesProgramfag.map(fag => `
+                <div class="sp-fag-item obligatorisk-programfag">
+                  <div class="sp-fag-item-title">${fag.navn}</div>
+                  <div class="sp-fag-item-meta">
+                    <div class="sp-fag-item-timer">${fag.timer}t</div>
+                    <div class="sp-fag-item-info" title="Mer info">i</div>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          ` : ''}
 
           <div class="sp-divider"></div>
 
@@ -157,7 +198,10 @@ export class UIRenderer {
       return `
         <div class="sp-fag-item selected sp-vg1-${type}-slot" data-type="${type}">
           <div class="sp-fag-item-title">${selectedSubject.navn}</div>
-          <div class="sp-fag-item-timer">${selectedSubject.timer} timer</div>
+          <div class="sp-fag-item-meta">
+            <div class="sp-fag-item-timer">${selectedSubject.timer}t</div>
+            <div class="sp-fag-item-info" title="Mer info">i</div>
+          </div>
         </div>
       `;
     }
@@ -175,6 +219,7 @@ export class UIRenderer {
   renderVG2() {
     const currentState = this.state.getState();
     const fellesfag = this.dataHandler.getFellesfag(currentState.programomrade, 'vg2');
+    const fellesProgramfag = this.dataHandler.getFellesProgramfag(currentState.programomrade, 'vg2');
 
     return `
       <div class="sp-vg-column">
@@ -188,15 +233,34 @@ export class UIRenderer {
             ${fellesfag.map(fag => `
               <div class="sp-fag-item fellesfag">
                 <div class="sp-fag-item-title">${fag.navn}</div>
-                <div class="sp-fag-item-timer">${fag.timer} timer</div>
+                <div class="sp-fag-item-meta">
+                  <div class="sp-fag-item-timer">${fag.timer}t</div>
+                  <div class="sp-fag-item-info" title="Mer info">i</div>
+                </div>
               </div>
             `).join('')}
           </div>
 
+          ${fellesProgramfag.length > 0 ? `
+            <div class="sp-divider"></div>
+            <div class="sp-fag-section">
+              <div class="sp-fag-section-title">Felles programfag</div>
+              ${fellesProgramfag.map(fag => `
+                <div class="sp-fag-item obligatorisk-programfag">
+                  <div class="sp-fag-item-title">${fag.navn}</div>
+                  <div class="sp-fag-item-meta">
+                    <div class="sp-fag-item-timer">${fag.timer}t</div>
+                    <div class="sp-fag-item-info" title="Mer info">i</div>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          ` : ''}
+
           <div class="sp-divider"></div>
 
-          <div class="sp-fag-section">
-            <div class="sp-fag-section-title">Matematikk</div>
+          <div class="sp-fag-section sp-vg2-matematikk-gruppe" data-trinn="vg2">
+            <div class="sp-fag-section-title">Matematikk (klikk for å velge)</div>
             ${this.renderVG2Matematikk(currentState.vg2.matematikk)}
           </div>
 
@@ -216,7 +280,10 @@ export class UIRenderer {
       return `
         <div class="sp-fag-item selected">
           <div class="sp-fag-item-title">${matematikk.navn}</div>
-          <div class="sp-fag-item-timer">${matematikk.timer} timer</div>
+          <div class="sp-fag-item-meta">
+            <div class="sp-fag-item-timer">${matematikk.timer}t</div>
+            <div class="sp-fag-item-info" title="Mer info">i</div>
+          </div>
         </div>
       `;
     }
@@ -233,7 +300,17 @@ export class UIRenderer {
    */
   renderVG3() {
     const currentState = this.state.getState();
-    const fellesfag = this.dataHandler.getFellesfag(currentState.programomrade, 'vg3');
+    const allFellesfag = this.dataHandler.getFellesfag(currentState.programomrade, 'vg3');
+    const fellesProgramfag = this.dataHandler.getFellesProgramfag(currentState.programomrade, 'vg3');
+
+    // Separate Historie from other fellesfag (Historie must be selected in blokkskjema)
+    const historie = allFellesfag.find(f => f.fagkode === 'HIS1010' || f.navn === 'Historie');
+    const fellesfag = allFellesfag.filter(f => f.fagkode !== 'HIS1010' && f.navn !== 'Historie');
+
+    // Check if Historie has been selected in blokkskjema
+    const selectedHistorie = currentState.vg3.programfag.find(f =>
+      f.fagkode === 'HIS1010' || f.id === 'historie-vg3' || f.fagkode?.includes('historie')
+    );
 
     return `
       <div class="sp-vg-column">
@@ -247,10 +324,45 @@ export class UIRenderer {
             ${fellesfag.map(fag => `
               <div class="sp-fag-item fellesfag">
                 <div class="sp-fag-item-title">${fag.navn}</div>
-                <div class="sp-fag-item-timer">${fag.timer} timer</div>
+                <div class="sp-fag-item-meta">
+                  <div class="sp-fag-item-timer">${fag.timer}t</div>
+                  <div class="sp-fag-item-info" title="Mer info">i</div>
+                </div>
               </div>
             `).join('')}
           </div>
+
+          ${historie ? `
+            <div class="sp-divider"></div>
+            <div class="sp-fag-section sp-vg3-historie-gruppe" data-trinn="vg3">
+              <div class="sp-fag-section-title">Historie (velges i blokkskjema)</div>
+              <div class="sp-fag-item ${selectedHistorie ? 'selected' : 'empty-slot historie-obligatorisk'}">
+                <div class="sp-fag-item-title">${selectedHistorie ? 'Historie' : 'Klikk for å velge historie'}</div>
+                ${selectedHistorie ? `
+                  <div class="sp-fag-item-meta">
+                    <div class="sp-fag-item-timer">${historie.timer}t</div>
+                    <div class="sp-fag-item-info" title="Mer info">i</div>
+                  </div>
+                ` : ''}
+              </div>
+            </div>
+          ` : ''}
+
+          ${fellesProgramfag.length > 0 ? `
+            <div class="sp-divider"></div>
+            <div class="sp-fag-section">
+              <div class="sp-fag-section-title">Felles programfag</div>
+              ${fellesProgramfag.map(fag => `
+                <div class="sp-fag-item obligatorisk-programfag">
+                  <div class="sp-fag-item-title">${fag.navn}</div>
+                  <div class="sp-fag-item-meta">
+                    <div class="sp-fag-item-timer">${fag.timer}t</div>
+                    <div class="sp-fag-item-info" title="Mer info">i</div>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          ` : ''}
 
           <div class="sp-divider"></div>
 
@@ -277,15 +389,25 @@ export class UIRenderer {
       programfag = programfag.filter(f => !f.fagkode.startsWith('MAT'));
     }
 
-    const slots = [];
-    const required = 3; // Always show 3 programfag slots
+    // Get required count from valgregler (use minAntallFag)
+    const valgregler = this.dataHandler.getValgreglerForTrinn(currentState.programomrade, trinn);
+    let required = valgregler?.minAntallFag || 3;
 
+    // For VG3, subtract 1 because Historie is included in minAntallFag but shown separately
+    if (trinn === 'vg3') {
+      required = Math.max(0, required - 1);
+    }
+
+    const slots = [];
     for (let i = 0; i < required; i++) {
       if (programfag[i]) {
         slots.push(`
           <div class="sp-fag-item selected">
             <div class="sp-fag-item-title">${programfag[i].navn}</div>
-            <div class="sp-fag-item-timer">${programfag[i].timer} timer</div>
+            <div class="sp-fag-item-meta">
+              <div class="sp-fag-item-timer">${programfag[i].timer}t</div>
+              <div class="sp-fag-item-info" title="Mer info">i</div>
+            </div>
           </div>
         `);
       } else {
@@ -320,6 +442,7 @@ export class UIRenderer {
    * Render VG1 modal (matematikk or fremmedspråk)
    */
   renderVG1Modal(type) {
+    const currentState = this.state.getState();
     const titles = {
       'matematikk': 'Velg matematikk for VG1',
       'fremmedsprak': 'Velg fremmedspråk for VG1'
@@ -330,17 +453,10 @@ export class UIRenderer {
       'fremmedsprak': 'Velg hvilket språk du vil lære'
     };
 
+    // Get fag from dataHandler based on type
     const fag = type === 'matematikk'
-      ? [
-          { fagkode: 'MAT1019', navn: 'Matematikk 1P', timer: '140' },
-          { fagkode: 'MAT1021', navn: 'Matematikk 1T', timer: '140' }
-        ]
-      : [
-          { fagkode: 'FSP6218', navn: 'Spansk II', timer: '113' },
-          { fagkode: 'FSP6221', navn: 'Fransk II', timer: '113' },
-          { fagkode: 'FSP6224', navn: 'Tysk II', timer: '113' },
-          { fagkode: 'FSP6241', navn: 'Mandarin II', timer: '113' }
-        ];
+      ? this.dataHandler.getVG1Matematikk()
+      : this.dataHandler.getVG1Fremmedsprak(currentState.harFremmedsprak);
 
     return `
       <div class="sp-modal sp-modal-${type}" style="display: none;">

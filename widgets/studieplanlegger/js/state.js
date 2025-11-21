@@ -45,9 +45,15 @@ export class StudieplanleggerState {
   }
 
   /**
-   * Set programområde
+   * Set programområde (clears programfag since they differ per program)
    */
   setProgramomrade(programomrade) {
+    if (this.state.programomrade !== programomrade) {
+      // Clear programfag when switching program (different blokkskjema)
+      this.state.vg2.programfag = [];
+      this.state.vg2.matematikk = null;
+      this.state.vg3.programfag = [];
+    }
     this.state.programomrade = programomrade;
     this.notify();
   }
@@ -81,6 +87,18 @@ export class StudieplanleggerState {
    */
   setProgramfag(trinn, programfag) {
     this.state[trinn].programfag = programfag;
+    this.notify();
+  }
+
+  /**
+   * Clear all fag selections (reset VG1, VG2, VG3)
+   */
+  clearAllSelections() {
+    this.state.vg1.matematikk = null;
+    this.state.vg1.fremmedsprak = null;
+    this.state.vg2.matematikk = null;
+    this.state.vg2.programfag = [];
+    this.state.vg3.programfag = [];
     this.notify();
   }
 

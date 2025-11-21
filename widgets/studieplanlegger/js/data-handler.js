@@ -21,7 +21,7 @@ export class DataHandler {
     this.useMockData = options.useMockData !== false;  // Default: true
     this.apiVersion = options.apiVersion || 'v2';  // Default: v2
 
-    // API URLs
+    // API URLs - Always use GitHub Pages (deployed API)
     this.apiBaseUrlV1 = options.apiBaseUrl || 'https://fredeids-metis.github.io/school-data/api/v1';
     this.apiBaseUrlV2 = 'https://fredeids-metis.github.io/school-data/api/v2';
 
@@ -77,6 +77,9 @@ export class DataHandler {
       this.timevalidering = this.data.timevalidering;
       this.curriculum = this.data.curriculum;
       this.school = this.data.school;
+      this.fellesfagData = this.data.fellesfag;  // From timefordeling.yml
+      this.fellesProgramfagData = this.data.fellesProgramfag;  // From timefordeling.yml
+      this.vg1ValgData = this.data.vg1Valg;  // VG1 valg (matematikk og fremmedspråk)
 
       this.loaded = true;
 
@@ -341,30 +344,214 @@ export class DataHandler {
   }
 
   /**
-   * Get fellesfag for a specific programområde and trinn (v1 legacy)
-   * @deprecated
+   * Get fellesfag for a specific programområde and trinn
+   * Uses v2 API data from timefordeling.yml
    */
   getFellesfag(programomrade, trinn) {
-    if (!this.timefordelingData) {
-      console.warn('Timefordeling data not loaded');
-      return [];
+    // v2: Use fellesfagData from timefordeling.yml (preferred)
+    if (this.fellesfagData && this.fellesfagData[trinn]) {
+      const filtered = this.fellesfagData[trinn].filter(fag => {
+        const fagTilgjengelig = fag.tilgjengeligFor || [];
+        return fagTilgjengelig.includes(programomrade);
+      }).map(fag => ({
+        navn: fag.title || fag.id,
+        timer: fag.timer,
+        fagkode: fag.fagkode || fag.id
+      }));
+
+      if (filtered.length > 0) {
+        return filtered;
+      }
     }
 
-    const programMap = {
-      'studiespesialisering': 'studiespesialisering',
-      'musikk-dans-drama': 'musikk',
-      'medier-kommunikasjon': 'medier'
+    // Fallback to old curriculum data structure
+    if (this.curriculum?.fellesfag && this.curriculum.fellesfag.length > 0) {
+      const filtered = this.curriculum.fellesfag.filter(fag => {
+        const fagTrinn = fag.trinn;
+        const fagTilgjengelig = fag.tilgjengeligFor || [];
+        return fagTrinn === trinn && fagTilgjengelig.includes(programomrade);
+      }).map(fag => ({
+        navn: fag.title || fag.id,
+        timer: fag.timer,
+        fagkode: fag.id
+      }));
+
+      if (filtered.length > 0) {
+        return filtered;
+      }
+    }
+
+    // v1 fallback: Use timefordeling data
+    if (this.timefordelingData) {
+      const programMap = {
+        'studiespesialisering': 'studiespesialisering',
+        'musikk-dans-drama': 'musikk',
+        'medier-kommunikasjon': 'medier'
+      };
+
+      const program = programMap[programomrade];
+      if (program && this.timefordelingData[program]) {
+        const data = this.timefordelingData[program][trinn];
+        if (Array.isArray(data)) {
+          return data;
+        }
+        if (data?.fellesfag) {
+          return data.fellesfag;
+        }
+      }
+    }
+
+    // Final fallback: Return hardcoded defaults
+    console.log(`Using default fellesfag for ${programomrade} ${trinn}`);
+    return this.getDefaultFellesfag(trinn, programomrade);
+  }
+
+  /**
+   * Get obligatoriske programfag (fellesProgramfag) for a specific program and trinn
+   * These are program-specific mandatory subjects that aren't selected in blokkskjema
+   */
+  getFellesProgramfag(programomrade, trinn) {
+    if (this.fellesProgramfagData && this.fellesProgramfagData[programomrade]) {
+      const programData = this.fellesProgramfagData[programomrade][trinn];
+      if (programData && programData.length > 0) {
+        return programData.map(fag => ({
+          navn: fag.title || fag.id,
+          timer: fag.timer,
+          fagkode: fag.fagkode || fag.id
+        }));
+      }
+    }
+    return [];
+  }
+
+  /**
+   * Get VG1 valg for matematikk
+   */
+  getVG1Matematikk() {
+    if (this.vg1ValgData?.matematikk) {
+      return this.vg1ValgData.matematikk.map(fag => ({
+        navn: fag.title || fag.id,
+        timer: fag.timer,
+        fagkode: fag.fagkode
+      }));
+    }
+    // Fallback
+    return [
+      { fagkode: 'MAT1019', navn: 'Matematikk 1P', timer: '140' },
+      { fagkode: 'MAT1021', navn: 'Matematikk 1T', timer: '140' }
+    ];
+  }
+
+  /**
+   * Get VG1 valg for fremmedspråk
+   * @param {boolean} harFremmedsprak - Om eleven har hatt fremmedspråk i ungdomsskolen
+   */
+  getVG1Fremmedsprak(harFremmedsprak = true) {
+    if (this.vg1ValgData?.fremmedsprak) {
+      const source = harFremmedsprak
+        ? this.vg1ValgData.fremmedsprak.harFremmedsprak
+        : this.vg1ValgData.fremmedsprak.ikkeHarFremmedsprak;
+
+      if (source) {
+        return source.map(fag => ({
+          navn: fag.title || fag.id,
+          timer: fag.timer,
+          fagkode: fag.fagkode,
+          merknad: fag.merknad || null
+        }));
+      }
+    }
+    // Fallback
+    return harFremmedsprak
+      ? [
+          { fagkode: 'FSP6218', navn: 'Spansk II', timer: '113' },
+          { fagkode: 'FSP6224', navn: 'Tysk II', timer: '113' },
+          { fagkode: 'FSP6221', navn: 'Fransk II', timer: '113' }
+        ]
+      : [
+          { fagkode: 'FSP6237', navn: 'Spansk I+II', timer: '253', merknad: 'Over VG1-VG3' }
+        ];
+  }
+
+  /**
+   * Get default fellesfag (hardcoded fallback) - program-specific
+   */
+  getDefaultFellesfag(trinn, programomrade = 'studiespesialisering') {
+    // Studiespesialisering fellesfag
+    const studiespesialisering = {
+      vg1: [
+        { navn: 'Norsk', timer: '140', fagkode: 'NOR1267' },
+        { navn: 'Engelsk', timer: '140', fagkode: 'ENG1007' },
+        { navn: 'Naturfag', timer: '140', fagkode: 'NAT1007' },
+        { navn: 'Geografi', timer: '56', fagkode: 'GEO1001' },
+        { navn: 'Samfunnskunnskap', timer: '84', fagkode: 'SAK1001' },
+        { navn: 'Kroppsøving', timer: '56', fagkode: 'KRO1017' }
+      ],
+      vg2: [
+        { navn: 'Norsk', timer: '113', fagkode: 'NOR1268' },
+        { navn: 'Historie', timer: '56', fagkode: 'HIS1008' },
+        { navn: 'Kroppsøving', timer: '56', fagkode: 'KRO1018' }
+      ],
+      vg3: [
+        { navn: 'Norsk', timer: '393', fagkode: 'NOR1269' },
+        { navn: 'Historie', timer: '113', fagkode: 'HIS1010' },
+        { navn: 'Religion og etikk', timer: '84', fagkode: 'REL1003' },
+        { navn: 'Kroppsøving', timer: '56', fagkode: 'KRO1019' }
+      ]
     };
 
-    const program = programMap[programomrade];
-    if (!program || !this.timefordelingData[program]) {
-      return [];
-    }
+    // Musikk, dans og drama - har programfag som fellesfag
+    const musikkDansDrama = {
+      vg1: [
+        { navn: 'Norsk', timer: '140', fagkode: 'NOR1267' },
+        { navn: 'Engelsk', timer: '140', fagkode: 'ENG1007' },
+        { navn: 'Naturfag', timer: '84', fagkode: 'NAT1007' },
+        { navn: 'Geografi', timer: '56', fagkode: 'GEO1001' },
+        { navn: 'Samfunnskunnskap', timer: '84', fagkode: 'SAK1001' },
+        { navn: 'Kroppsøving', timer: '56', fagkode: 'KRO1017' }
+      ],
+      vg2: [
+        { navn: 'Norsk', timer: '113', fagkode: 'NOR1268' },
+        { navn: 'Historie', timer: '56', fagkode: 'HIS1008' },
+        { navn: 'Kroppsøving', timer: '56', fagkode: 'KRO1018' }
+      ],
+      vg3: [
+        { navn: 'Norsk', timer: '393', fagkode: 'NOR1269' },
+        { navn: 'Historie', timer: '113', fagkode: 'HIS1010' },
+        { navn: 'Religion og etikk', timer: '84', fagkode: 'REL1003' },
+        { navn: 'Kroppsøving', timer: '56', fagkode: 'KRO1019' }
+      ]
+    };
 
-    const data = this.timefordelingData[program][trinn];
-    if (Array.isArray(data)) {
-      return data;
-    }
-    return data?.fellesfag || [];
+    // Medier og kommunikasjon
+    const medierKommunikasjon = {
+      vg1: [
+        { navn: 'Norsk', timer: '140', fagkode: 'NOR1267' },
+        { navn: 'Engelsk', timer: '140', fagkode: 'ENG1007' },
+        { navn: 'Naturfag', timer: '84', fagkode: 'NAT1007' },
+        { navn: 'Geografi', timer: '56', fagkode: 'GEO1001' },
+        { navn: 'Samfunnskunnskap', timer: '84', fagkode: 'SAK1001' },
+        { navn: 'Kroppsøving', timer: '56', fagkode: 'KRO1017' }
+      ],
+      vg2: [
+        { navn: 'Norsk', timer: '113', fagkode: 'NOR1268' },
+        { navn: 'Historie', timer: '56', fagkode: 'HIS1008' },
+        { navn: 'Kroppsøving', timer: '56', fagkode: 'KRO1018' }
+      ],
+      vg3: [
+        { navn: 'Norsk', timer: '393', fagkode: 'NOR1269' },
+        { navn: 'Historie', timer: '113', fagkode: 'HIS1010' },
+        { navn: 'Religion og etikk', timer: '84', fagkode: 'REL1003' },
+        { navn: 'Kroppsøving', timer: '56', fagkode: 'KRO1019' }
+      ]
+    };
+
+    const programDefaults = {
+      'studiespesialisering': studiespesialisering,
+      'musikk-dans-drama': musikkDansDrama,
+      'medier-kommunikasjon': medierKommunikasjon
+    };
+
+    return programDefaults[programomrade]?.[trinn] || studiespesialisering[trinn] || [];
   }
 }
