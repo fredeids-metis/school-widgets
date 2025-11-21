@@ -432,6 +432,18 @@ export class Studieplanlegger {
             return;
           }
 
+          // Validate: Spansk I+II required if harFremmedsprak=false
+          if (currentState.harFremmedsprak === false) {
+            const spanskFag = this.selectedBlokkskjemaFag.find(f =>
+              f.id?.includes('spansk-i') || f.fagkode?.includes('spansk-i') ||
+              f.id?.includes('FSP') || f.navn?.includes('Spansk I')
+            );
+            if (!spanskFag) {
+              this.showModalValidationError(modal, 'Du må velge Spansk I+II siden du ikke hadde fremmedspråk på ungdomsskolen!');
+              return;
+            }
+          }
+
           this.state.setProgramfag(trinn, this.selectedBlokkskjemaFag);
         } else {
           this.state.setProgramfag(trinn, this.selectedBlokkskjemaFag);
@@ -541,11 +553,18 @@ export class Studieplanlegger {
       // Apply visual state based on validation
       if (validation.status === 'blocked') {
         item.classList.add('blocked');
-        item.title = validation.reasons.join('\n');
+        // Include suggestion in tooltip if available
+        const tooltip = validation.suggestion
+          ? `${validation.reasons.join('\n')}\n\n💡 ${validation.suggestion}`
+          : validation.reasons.join('\n');
+        item.title = tooltip;
         this.addValidationHint(item, '🚫', validation.reasons[0]);
       } else if (validation.status === 'warning' && isSelectedHere) {
         item.classList.add('missing-prerequisite');
-        item.title = validation.reasons.join('\n');
+        const tooltip = validation.suggestion
+          ? `${validation.reasons.join('\n')}\n\n💡 ${validation.suggestion}`
+          : validation.reasons.join('\n');
+        item.title = tooltip;
         this.addValidationHint(item, '⚠️', validation.reasons[0]);
       }
 
@@ -581,7 +600,12 @@ export class Studieplanlegger {
     );
 
     modalValidation.errors.forEach(err => {
-      this.blokkValidationErrors.push(err.message);
+      // Store full error object to preserve suggestion
+      this.blokkValidationErrors.push({
+        message: err.message,
+        suggestion: err.suggestion || null,
+        type: err.type
+      });
     });
 
     // Update validation display with fordypning status
@@ -668,12 +692,19 @@ export class Studieplanlegger {
         <div class="sp-validering-errors">
           <div class="sp-validering-title">⚠️ Valideringsfeil:</div>
           <div class="sp-validering-items">
-            ${this.blokkValidationErrors.map(err => `
-              <div class="sp-validering-item unmet">
-                <div class="sp-validering-icon"></div>
-                <div class="sp-validering-text">${err}</div>
-              </div>
-            `).join('')}
+            ${this.blokkValidationErrors.map(err => {
+              const message = typeof err === 'string' ? err : err.message;
+              const suggestion = typeof err === 'object' ? err.suggestion : null;
+              return `
+                <div class="sp-validering-item unmet">
+                  <div class="sp-validering-icon">!</div>
+                  <div class="sp-validering-content">
+                    <div class="sp-validering-text">${message}</div>
+                    ${suggestion ? `<div class="sp-validering-suggestion">💡 ${suggestion}</div>` : ''}
+                  </div>
+                </div>
+              `;
+            }).join('')}
           </div>
         </div>
       `;

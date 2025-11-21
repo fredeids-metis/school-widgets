@@ -93,7 +93,29 @@ export class ValidationService {
         id: 'math-s-r-conflict',
         type: 'blocking',
         gruppe: ['matematikk-s1', 'matematikk-s2', 'matematikk-r1', 'matematikk-r2'],
-        feilmelding: 'Matematikk S og R kan ikke kombineres'
+        feilmelding: 'Du kan ikke kombinere Matematikk S og R på samme vitnemål',
+        forslag: 'Velg enten S-linja (S1/S2) eller R-linja (R1/R2)'
+      },
+      {
+        id: 'math-r-2p-conflict',
+        type: 'blocking',
+        gruppe: ['matematikk-r1', 'matematikk-r2', 'matematikk-2p'],
+        feilmelding: 'R-matematikk og 2P-matematikk kan ikke kombineres',
+        forslag: 'Matematikk R1 erstatter 2P automatisk'
+      },
+      {
+        id: 'geofag-x-1-conflict',
+        type: 'blocking',
+        gruppe: ['geofag-x', 'geofag-1'],
+        feilmelding: 'Geofag X og Geofag 1 kan ikke kombineres',
+        forslag: 'Velg enten Geofag X eller Geofag 1'
+      },
+      {
+        id: 'tof-x-1-conflict',
+        type: 'blocking',
+        gruppe: ['teknologi-og-forskningslare-x', 'teknologi-og-forskningslare-1'],
+        feilmelding: 'Teknologi og forskningslære X og 1 kan ikke kombineres',
+        forslag: 'Velg enten X-varianten eller nivå 1'
       }
     ];
 
