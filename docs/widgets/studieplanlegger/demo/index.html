@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Studieplanlegger - Modular Demo</title>
+
+  <!-- Shared CSS -->
+  <link rel="stylesheet" href="../../../shared/base.css">
+  <link rel="stylesheet" href="../../../shared/brand/bergen-private-gymnas.css">
+  <link rel="stylesheet" href="../../../shared/components/modal.css">
+
+  <!-- Widget CSS -->
+  <link rel="stylesheet" href="../studieplanlegger.css">
+
+  <style>
+    body {
+      font-family: var(--font-family);
+      background: var(--background-light);
+      padding: 2rem;
+      margin: 0;
+    }
+
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+      color: var(--primary-color);
+    }
+
+    .demo-info {
+      background: white;
+      border: 2px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+      font-size: 0.9rem;
+      color: var(--text-medium);
+    }
+  </style>
+</head>
+<body>
+  <h1>Studieplanlegger (Modular Demo)</h1>
+
+  <div class="demo-info">
+    <strong>ℹ️ Demo info:</strong> Dette er en modulær versjon med separate JavaScript-filer og CSS-komponenter.
+    Data lastes fra school-data prosjektet.
+  </div>
+
+  <!-- Widget container -->
+  <div id="studieplanlegger-widget"></div>
+
+  <!-- Widget JavaScript (ES6 modules) -->
+  <script type="module">
+    import { Studieplanlegger } from '../js/studieplanlegger.js';
+
+    // Initialize widget
+    const container = document.getElementById('studieplanlegger-widget');
+    const widget = new Studieplanlegger(container, {
+      schoolId: 'bergen-private-gymnas'
+    });
+
+    // Expose for debugging
+    window.studieplanlegger = widget;
+  </script>
+</body>
+</html>

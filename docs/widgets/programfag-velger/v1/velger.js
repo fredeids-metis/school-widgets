@@ -79,9 +79,149 @@
       const allProgramfagData = await allProgramfagRes.json();
 
       this.data.programfag = programfagData.programfag || [];
-      this.data.blokkskjema = blokkskjemaData;
-      this.data.kriterier = blokkskjemaData.kriterier || {};
+
+      // Normalize blokkskjema to support both v1 and v2 formats
+      this.data.blokkskjema = this.normalizeBlokkskjema(blokkskjemaData);
+      this.data.kriterier = this.data.blokkskjema.kriterier || {};
       this.data.allProgramfag = allProgramfagData.programfag || [];
+    },
+
+    /**
+     * Normalize blokkskjema data to support both v1 and v2 formats
+     * v1: Uses vg2Only/vg3Only, kriterier
+     * v2: Uses trinn, valgregler, new subject IDs
+     */
+    normalizeBlokkskjema(data) {
+      const isV2 = data.versjon && data.versjon.includes('v2');
+
+      if (!isV2) {
+        // v1 format - use as-is
+        return data;
+      }
+
+      // v2 format - adapt to v1 structure for compatibility
+      const normalized = { ...data };
+
+      // Map valgregler → kriterier for v2
+      if (data.valgregler && !data.kriterier) {
+        normalized.kriterier = data.valgregler;
+      }
+
+      // Enrich fag with kategori from curriculum data if missing
+      if (normalized.blokker) {
+        Object.keys(normalized.blokker).forEach(blokkKey => {
+          const blokk = normalized.blokker[blokkKey];
+          if (blokk.fag) {
+            blokk.fag = blokk.fag.map(fag => this.enrichFagWithKategori(fag));
+          }
+        });
+      }
+
+      return normalized;
+    },
+
+    /**
+     * Enrich fag object with kategori field from curriculum data
+     * Needed for v2 which doesn't include kategori in blokkskjema
+     */
+    enrichFagWithKategori(fag) {
+      // If kategori already exists, return as-is
+      if (fag.kategori) {
+        return fag;
+      }
+
+      // Look up kategori from curriculum data
+      const curriculumFag = this.data.allProgramfag?.find(f => f.id === fag.id);
+      if (curriculumFag?.kategori) {
+        return { ...fag, kategori: curriculumFag.kategori };
+      }
+
+      // Fallback: derive from subject ID patterns
+      const kategoriMap = {
+        'matematikk-': 'matematikk',
+        'biologi-': 'naturfag',
+        'kjemi-': 'naturfag',
+        'fysikk-': 'naturfag',
+        'informasjonsteknologi-': 'it',
+        'okonomistyring': 'økonomi',
+        'okonomi-og-ledelse': 'økonomi',
+        'samfunnsokonomi-': 'økonomi',
+        'markedsforing-': 'bedriftsledelse',
+        'entreprenorskap-': 'bedriftsledelse',
+        'sosiologi-': 'samfunnsfag',
+        'politikk-': 'samfunnsfag',
+        'sosialkunnskap': 'samfunnsfag',
+        'rettslare-': 'samfunnsfag',
+        'rettslaere-': 'samfunnsfag',
+        'psykologi-': 'samfunnsfag',
+        'historie-': 'samfunnsfag',
+        'engelsk-': 'språk',
+        'spansk-': 'språk',
+        'bilde': 'kunst',
+        'grafisk-design': 'kunst',
+        'musikk-': 'musikk'
+      };
+
+      for (const [pattern, kategori] of Object.entries(kategoriMap)) {
+        if (fag.id.startsWith(pattern) || fag.id === pattern) {
+          return { ...fag, kategori };
+        }
+      }
+
+      // No kategori found
+      return fag;
+    },
+
+    /**
+     * Normalize subject ID to support both v1 and v2 naming conventions
+     * v1: 'historie', 'spansk-1-2'
+     * v2: 'historie-vg3', 'spansk-i-ii-vg3'
+     */
+    normalizeSubjectId(fagId) {
+      const mapping = {
+        'historie': 'historie-vg3',
+        'historie-vg3': 'historie-vg3',
+        'spansk-1-2': 'spansk-i-ii-vg3',
+        'spansk-i-ii-vg3': 'spansk-i-ii-vg3'
+      };
+      return mapping[fagId] || fagId;
+    },
+
+    /**
+     * Check if subject ID is one of the variants (for flexible matching)
+     */
+    isSameFag(fagId1, fagId2) {
+      return this.normalizeSubjectId(fagId1) === this.normalizeSubjectId(fagId2);
+    },
+
+    /**
+     * Check if a fag is VG2-only (supports both v1 and v2 formats)
+     */
+    isVG2Only(fag) {
+      // v1: uses vg2Only flag
+      if (fag.vg2Only !== undefined) {
+        return fag.vg2Only;
+      }
+      // v2: uses trinn field
+      if (fag.trinn) {
+        return fag.trinn === 'vg2';
+      }
+      return false;
+    },
+
+    /**
+     * Check if a fag is VG3-only (supports both v1 and v2 formats)
+     */
+    isVG3Only(fag) {
+      // v1: uses vg3Only flag
+      if (fag.vg3Only !== undefined) {
+        return fag.vg3Only;
+      }
+      // v2: uses trinn field
+      if (fag.trinn) {
+        return fag.trinn === 'vg3';
+      }
+      return false;
     },
 
     /**
@@ -344,7 +484,7 @@
           <div class="pv-previous-grid">
             ${Object.entries(blokker).map(([blokkId, blokk]) => {
               // Only show VG2 fag (exclude vg3Only fag)
-              const vg2Fag = blokk.fag.filter(f => !f.vg3Only);
+              const vg2Fag = blokk.fag.filter(f => !this.isVG3Only(f));
               return `
                 <div class="pv-previous-blokk">
                   <h4>${blokk.navn}</h4>
@@ -428,7 +568,7 @@
                     <div class="${className}" data-fag="${fag.id}" data-blokk="${blokkId}">
                       <div class="pv-fag-item-content">
                         <div class="pv-fag-item-title">${fagData?.title || fag.id}</div>
-                        ${fag.vg3Only ? '<span class="pv-fag-item-badge">Kun VG3</span>' : ''}
+                        ${this.isVG3Only(fag) ? '<span class="pv-fag-item-badge">Kun VG3</span>' : ''}
                         ${isDisabled ? `<div style="font-size: 0.8rem; color: #666; margin-top: 0.25rem;">Krever forutsetning</div>` : ''}
                       </div>
                       <button class="pv-fag-info-btn" data-fag-info="${fag.id}" title="Se fagdetaljer" aria-label="Se detaljer for ${fagData?.title || fag.id}">
@@ -604,10 +744,11 @@
         el.addEventListener('click', (e) => {
           const value = e.currentTarget.dataset.spansk;
           this.state.harSpansk = value === 'true';
-          // If changing from Ja to Nei, remove spansk-1-2 from selectedSubjects if present
+          // If changing from Ja to Nei, remove spansk from selectedSubjects if present
           if (!this.state.harSpansk) {
             Object.keys(this.state.selectedSubjects).forEach(blokkId => {
-              if (this.state.selectedSubjects[blokkId] === 'spansk-1-2') {
+              const fagId = this.state.selectedSubjects[blokkId];
+              if (this.isSameFag(fagId, 'spansk-1-2') || this.isSameFag(fagId, 'spansk-i-ii-vg3')) {
                 delete this.state.selectedSubjects[blokkId];
               }
             });
@@ -676,11 +817,11 @@
       Object.entries(blokker).forEach(([blokkId, blokk]) => {
         available[blokkId] = blokk.fag.filter(fag => {
           // For VG2, exclude VG3-only fag
-          if (this.state.trinn === 'vg2' && fag.vg3Only) {
+          if (this.state.trinn === 'vg2' && this.isVG3Only(fag)) {
             return false;
           }
           // For VG3, exclude VG2-only fag
-          if (this.state.trinn === 'vg3' && fag.vg2Only) {
+          if (this.state.trinn === 'vg3' && this.isVG2Only(fag)) {
             return false;
           }
           return true;
@@ -1055,8 +1196,8 @@
       const fagomradeGroups = {};
       uniqueFagIds.forEach(fagId => {
         const fagomrade = this.getFagomrade(fagId);
-        // Exclude historie and spansk-1-2 from fordypning calculation
-        if (fagomrade && fagomrade !== 'HIS' && fagId !== 'spansk-1-2') {
+        // Exclude historie and spansk from fordypning calculation
+        if (fagomrade && fagomrade !== 'HIS' && !this.isSameFag(fagId, 'spansk-1-2') && !this.isSameFag(fagId, 'spansk-i-ii-vg3')) {
           if (!fagomradeGroups[fagomrade]) {
             fagomradeGroups[fagomrade] = [];
           }

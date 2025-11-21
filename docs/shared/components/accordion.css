@@ -1,0 +1,131 @@
+/**
+ * Accordion Component - Collapsible sections
+ * Used for kompetansemål in modal views
+ */
+
+/* === Accordion Container === */
+.accordion {
+  margin: 30px 0;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: rgba(232, 245, 163, 0.15); /* Lysere versjon av secondary-color */
+  border: 2px solid var(--secondary-color);
+  transition: all var(--transition-normal);
+}
+
+/* === Accordion Header === */
+.accordion-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background: rgba(232, 245, 163, 0.3);
+  cursor: pointer;
+  transition: background var(--transition-normal);
+  user-select: none;
+}
+
+.accordion-header:hover {
+  background: rgba(232, 245, 163, 0.5);
+}
+
+.accordion-header h3 {
+  margin: 0;
+  padding: 0;
+  border: none;
+  font-size: 1.4rem;
+  color: var(--primary-color);
+}
+
+.accordion-count {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #666;
+  margin-left: 8px;
+}
+
+/* === Accordion Icon === */
+.accordion-icon {
+  font-size: 1.2rem;
+  color: var(--primary-color);
+  transition: transform var(--transition-normal);
+  font-weight: bold;
+}
+
+.accordion.open .accordion-icon {
+  transform: rotate(180deg);
+}
+
+/* === Accordion Content === */
+.accordion-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height var(--transition-slow);
+  background: rgba(232, 245, 163, 0.08); /* Veldig lys grønn-grå */
+}
+
+.accordion.open .accordion-content {
+  max-height: 2000px; /* Høy nok verdi til å vise alt innhold */
+  padding: 20px;
+  background: rgba(232, 245, 163, 0.12); /* Litt mørkere når åpen */
+}
+
+.accordion.open .accordion-header {
+  background: var(--secondary-color);
+}
+
+.accordion-content ul {
+  margin: 0;
+  padding: 0;
+}
+
+/* === Kjerneelement (Competency Goals) === */
+.kjerneelement {
+  margin-bottom: 20px;
+  padding: 20px;
+  background: white;
+  border-radius: var(--radius-md);
+  border-left: 5px solid var(--primary-color);
+  box-shadow: 0 3px 10px rgba(31, 71, 57, 0.12);
+  transition: all var(--transition-normal);
+  width: 100%;
+  box-sizing: border-box;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
+.kjerneelement:hover {
+  box-shadow: 0 5px 16px rgba(31, 71, 57, 0.18);
+  transform: translateX(4px);
+}
+
+.kjerneelement h4 {
+  margin: 0 0 5px 0;
+  color: var(--primary-color);
+  font-size: 1.1rem;
+}
+
+.kjerneelement p {
+  margin: 5px 0 0 0;
+  color: #666;
+  line-height: 1.6;
+}
+
+/* === Responsive Design === */
+@media (max-width: 480px) {
+  .kjerneelement {
+    padding: 12px;
+    margin-bottom: 12px;
+    margin-left: 0;
+    margin-right: 0;
+    border-left-width: 3px;
+  }
+
+  .kjerneelement h4 {
+    font-size: 1.05rem;
+  }
+
+  .kjerneelement p {
+    font-size: 0.9rem;
+  }
+}

@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Studieplanlegger - Prototype v2</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f5f5f5;
+      padding: 1rem;
+    }
+
+    h1 {
+      color: #003366;
+      margin-bottom: 0.5rem;
+      font-size: 1.5rem;
+    }
+
+    .subtitle {
+      color: #666;
+      margin-bottom: 1.5rem;
+      font-size: 0.9rem;
+    }
+
+    /* Filter section */
+    .filter-section {
+      background: white;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .filter-group {
+      margin-bottom: 1rem;
+    }
+
+    .filter-group:last-child {
+      margin-bottom: 0;
+    }
+
+    .filter-label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: #333;
+    }
+
+    .filter-buttons {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      padding: 0.5rem 1rem;
+      border: 2px solid #003366;
+      background: white;
+      color: #003366;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+    }
+
+    .filter-btn:hover {
+      background: #f0f4f8;
+    }
+
+    .filter-btn.selected {
+      background: #003366;
+      color: white;
+    }
+
+    /* VG Grid */
+    .vg-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+
+    @media (max-width: 900px) {
+      .vg-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .vg-column {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+
+    .vg-header {
+      background: #003366;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+      font-weight: bold;
+      font-size: 1.1rem;
+    }
+
+    .vg-header .timer {
+      font-size: 0.8rem;
+      font-weight: normal;
+      opacity: 0.9;
+    }
+
+    .vg-content {
+      padding: 1rem;
+    }
+
+    /* Fag sections */
+    .fag-section {
+      margin-bottom: 1rem;
+    }
+
+    .fag-section-title {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: #666;
+      margin-bottom: 0.5rem;
+      letter-spacing: 0.5px;
+    }
+
+    .fag-item {
+      background: #f8f9fa;
+      border: 2px solid #e9ecef;
+      border-radius: 6px;
+      padding: 0.75rem;
+      margin-bottom: 0.5rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .fag-item:hover {
+      border-color: #003366;
+      background: #f0f4f8;
+    }
+
+    .fag-item.selected {
+      background: #e8f4e8;
+      border-color: #28a745;
+    }
+
+    .fag-item.empty {
+      background: #fff3cd;
+      border-color: #ffc107;
+      border-style: dashed;
+    }
+
+    .fag-item.fellesfag {
+      background: #e9ecef;
+      border-color: #dee2e6;
+      cursor: default;
+    }
+
+    .fag-item.fellesfag:hover {
+      border-color: #dee2e6;
+      background: #e9ecef;
+    }
+
+    .fag-navn {
+      font-weight: 500;
+      color: #333;
+      font-size: 0.9rem;
+    }
+
+    .fag-timer {
+      font-size: 0.75rem;
+      color: #666;
+      margin-top: 0.25rem;
+    }
+
+    /* Info box */
+    .info-box {
+      background: #e7f3ff;
+      border: 1px solid #b8daff;
+      border-radius: 6px;
+      padding: 0.75rem;
+      margin-bottom: 1rem;
+      font-size: 0.85rem;
+      color: #004085;
+    }
+
+    /* Validation */
+    .validation-bar {
+      background: white;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .validation-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+    }
+
+    .validation-icon {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: bold;
+    }
+
+    .validation-icon.ok {
+      background: #28a745;
+      color: white;
+    }
+
+    .validation-icon.warn {
+      background: #ffc107;
+      color: #333;
+    }
+
+    /* Loading */
+    .loading {
+      text-align: center;
+      padding: 2rem;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <h1>Studieplanlegger</h1>
+  <p class="subtitle">Bergen Private Gymnas - Planlegg ditt studieløp</p>
+
+  <div id="app">
+    <div class="loading">Laster data...</div>
+  </div>
+
+  <script type="module">
+    import { DataHandler } from '../js/data-handler.js';
+
+    // Global state
+    let dataHandler = null;
+    let state = {
+      program: 'studiespesialisering',
+      trinn: 'vg2',
+      harFremmedsprak: true,
+      valgtefag: {
+        vg2: [],
+        vg3: []
+      }
+    };
+
+    // Initialize
+    async function init() {
+      dataHandler = new DataHandler({
+        schoolId: 'bergen-private-gymnas',
+        useMockData: false,
+        apiVersion: 'v2'
+      });
+
+      try {
+        await dataHandler.loadAll();
+        render();
+      } catch (error) {
+        document.getElementById('app').innerHTML = `
+          <div class="info-box" style="background: #f8d7da; border-color: #f5c6cb; color: #721c24;">
+            Feil ved lasting av data: ${error.message}
+          </div>
+        `;
+      }
+    }
+
+    // Main render function
+    function render() {
+      const app = document.getElementById('app');
+      const valgregler = dataHandler.getValgreglerForTrinn(state.program, state.trinn);
+      const fag = dataHandler.getFagForProgramOgTrinn(state.program, state.trinn);
+
+      app.innerHTML = `
+        ${renderFilters()}
+        ${renderValidation(valgregler)}
+        ${renderVGGrid(fag, valgregler)}
+      `;
+
+      attachEventListeners();
+    }
+
+    // Render filter section
+    function renderFilters() {
+      const programs = dataHandler.getPrograms();
+
+      return `
+        <div class="filter-section">
+          <div class="filter-group">
+            <label class="filter-label">Programområde:</label>
+            <div class="filter-buttons">
+              ${programs.map(p => `
+                <button class="filter-btn ${state.program === p.id ? 'selected' : ''}"
+                        data-program="${p.id}">
+                  ${p.name}
+                </button>
+              `).join('')}
+            </div>
+          </div>
+
+          <div class="filter-group">
+            <label class="filter-label">Velg trinn:</label>
+            <div class="filter-buttons">
+              <button class="filter-btn ${state.trinn === 'vg2' ? 'selected' : ''}" data-trinn="vg2">VG2</button>
+              <button class="filter-btn ${state.trinn === 'vg3' ? 'selected' : ''}" data-trinn="vg3">VG3</button>
+            </div>
+          </div>
+
+          <div class="filter-group">
+            <label class="filter-label">Hadde du fremmedspråk på ungdomsskolen?</label>
+            <div class="filter-buttons">
+              <button class="filter-btn ${state.harFremmedsprak ? 'selected' : ''}" data-fremmedsprak="true">Ja</button>
+              <button class="filter-btn ${!state.harFremmedsprak ? 'selected' : ''}" data-fremmedsprak="false">Nei</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Render validation bar
+    function renderValidation(valgregler) {
+      if (!valgregler) return '';
+
+      const items = valgregler.infomeldinger || [];
+
+      return `
+        <div class="validation-bar">
+          <div class="validation-item">
+            <div class="validation-icon warn">i</div>
+            <span>Min ${valgregler.minAntallFag} fag, maks ${valgregler.maxAntallFag} fag</span>
+          </div>
+          ${valgregler.krav?.find(k => k.timer) ? `
+            <div class="validation-item">
+              <div class="validation-icon warn">i</div>
+              <span>Minimum ${valgregler.krav.find(k => k.timer).timer} timer</span>
+            </div>
+          ` : ''}
+        </div>
+      `;
+    }
+
+    // Render VG grid
+    function renderVGGrid(fag, valgregler) {
+      const blokker = Object.entries(fag);
+
+      if (blokker.length === 0) {
+        return `<div class="info-box">Ingen fag tilgjengelig for dette programmet/trinnet.</div>`;
+      }
+
+      return `
+        <div class="info-box">
+          <strong>${state.program.replace(/-/g, ' ')} - ${state.trinn.toUpperCase()}</strong><br>
+          Tilgjengelige blokker: ${valgregler?.tilgjengeligeBlokker?.join(', ') || 'alle'}
+        </div>
+        <div class="vg-grid">
+          ${blokker.map(([blokkId, blokk]) => renderBlokk(blokkId, blokk)).join('')}
+        </div>
+      `;
+    }
+
+    // Render a single blokk
+    function renderBlokk(blokkId, blokk) {
+      return `
+        <div class="vg-column">
+          <div class="vg-header">
+            ${blokk.navn}
+            <div class="timer">${blokk.fag.length} fag</div>
+          </div>
+          <div class="vg-content">
+            ${blokk.fag.map(fag => renderFag(fag)).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    // Render a single fag
+    function renderFag(fag) {
+      const isSelected = state.valgtefag[state.trinn]?.includes(fag.id);
+      const prereq = dataHandler.getPrerequisiteFor(fag.id);
+      const exclusion = dataHandler.isExcludedBy(fag.id, state.valgtefag[state.trinn] || []);
+
+      let statusClass = '';
+      let statusNote = '';
+
+      if (isSelected) {
+        statusClass = 'selected';
+      } else if (exclusion.excluded) {
+        statusClass = 'fellesfag'; // grayed out
+        statusNote = `Ekskludert: ${exclusion.beskrivelse}`;
+      } else if (prereq && !prereqMet(prereq)) {
+        statusNote = `Krever: ${prereq.krever.join(', ')}`;
+      }
+
+      return `
+        <div class="fag-item ${statusClass}" data-fag-id="${fag.id}">
+          <div class="fag-navn">${fag.title || fag.id}</div>
+          <div class="fag-timer">${fag.timer} timer</div>
+          ${statusNote ? `<div class="fag-timer" style="color: #dc3545;">${statusNote}</div>` : ''}
+          ${fag.merknad ? `<div class="fag-timer" style="font-style: italic;">${fag.merknad}</div>` : ''}
+        </div>
+      `;
+    }
+
+    // Check if prerequisite is met
+    function prereqMet(prereq) {
+      // For now, just return true - we'd need to check VG2 selections for VG3
+      return true;
+    }
+
+    // Attach event listeners
+    function attachEventListeners() {
+      // Program buttons
+      document.querySelectorAll('[data-program]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          state.program = e.target.dataset.program;
+          state.valgtefag = { vg2: [], vg3: [] };
+          render();
+        });
+      });
+
+      // Trinn buttons
+      document.querySelectorAll('[data-trinn]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          state.trinn = e.target.dataset.trinn;
+          render();
+        });
+      });
+
+      // Fremmedspråk buttons
+      document.querySelectorAll('[data-fremmedsprak]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          state.harFremmedsprak = e.target.dataset.fremmedsprak === 'true';
+          render();
+        });
+      });
+
+      // Fag selection
+      document.querySelectorAll('.fag-item:not(.fellesfag)').forEach(item => {
+        item.addEventListener('click', (e) => {
+          const fagId = e.currentTarget.dataset.fagId;
+          toggleFag(fagId);
+        });
+      });
+    }
+
+    // Toggle fag selection
+    function toggleFag(fagId) {
+      const trinnFag = state.valgtefag[state.trinn] || [];
+
+      if (trinnFag.includes(fagId)) {
+        state.valgtefag[state.trinn] = trinnFag.filter(f => f !== fagId);
+      } else {
+        // Check exclusions first
+        const exclusion = dataHandler.isExcludedBy(fagId, trinnFag);
+        if (exclusion.excluded) {
+          alert(exclusion.feilmelding);
+          return;
+        }
+        state.valgtefag[state.trinn] = [...trinnFag, fagId];
+      }
+
+      render();
+    }
+
+    // Start
+    init();
+  </script>
+</body>
+</html>

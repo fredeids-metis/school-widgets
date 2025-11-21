@@ -1,0 +1,14 @@
+{
+  "name": "studieplanlegger",
+  "version": "1.0.0",
+  "description": "Studieplanlegger widget for Bergen Private Gymnas",
+  "scripts": {
+    "dev": "npx live-server --port=8080 --open=demo/index.html",
+    "dev:test": "npx live-server --port=8080 --open=demo/test-v2-api.html"
+  },
+  "author": "Fredrik",
+  "license": "MIT",
+  "devDependencies": {
+    "live-server": "^1.2.2"
+  }
+}
